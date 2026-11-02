@@ -65,7 +65,7 @@ function Shell() {
         </div>
       </aside>
       <main id="main" ref={mainRef} tabIndex={-1}>
-        <div className="app-brand"><img src="/brand-lockup.png" alt="Elementa — Explore, Understand, Discover" /></div>
+        <div className="app-brand"><img src="/brand-mark.png" alt="Elementa" /></div>
         <OfflineStatus />
         {storageWarning && <div className="banner warn" role="alert">{storageWarning}</div>}
         <Suspense fallback={<PageLoader />}>{screen}</Suspense>
