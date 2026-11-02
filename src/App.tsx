@@ -48,7 +48,7 @@ function Shell() {
     <div className="shell">
       <a className="skip" href="#main" onClick={(e) => { e.preventDefault(); mainRef.current?.focus(); }}>Skip to content</a>
       <aside className="rail">
-        <a className="brand" href="#/" aria-label="Elementa home">El</a>
+        <a className="brand" href="#/" aria-label="Elementa home"><img src="/brand-mark.svg" alt="" /></a>
         <nav className="nav" aria-label="Main">
           {NAV.map(({ id, label, Icon }) => (
             <a key={id} href={`#/${id}`} aria-current={section === id ? 'page' : undefined}>
