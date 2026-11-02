@@ -22,7 +22,10 @@ function DailyChallenge() {
 
   return (
     <section className="card" aria-labelledby="daily-title">
-      <h2 id="daily-title">Daily chemistry challenge</h2>
+      <div className="section-head" style={{ margin: 0 }}>
+        <h2 id="daily-title">Daily chemistry challenge</h2>
+        <span className="tag">Today</span>
+      </div>
       <p id="daily-q" className="daily-q">{q.stem}</p>
       <div className="chips" role="group" aria-labelledby="daily-q">
         {q.choices.map((c) => (
@@ -59,7 +62,7 @@ function LevelRing({ level, fraction }: { level: number; fraction: number }) {
 function HomeSkeleton() {
   return (
     <div aria-hidden="true">
-      <div className="hero"><Skeleton w={112} h={112} r="50%" /><div style={{ display: 'grid', gap: 12 }}><Skeleton w="60%" h={30} r={8} /><Skeleton w="80%" h={14} /><Skeleton w="40%" h={36} r={999} /></div></div>
+      <div className="hero"><Skeleton w={112} h={112} r="50%" /><div style={{ display: 'grid', gap: 12 }}><Skeleton w="60%" h={30} r={8} /><Skeleton w="80%" h={14} /><Skeleton w="40%" h={36} r={99} /></div></div>
       <PageSkeleton cards={3} />
     </div>
   );
@@ -88,20 +91,46 @@ export function Home() {
 
   if (!ready) return <HomeSkeleton />;
 
+  const nextAction = done
+    ? { label: 'Review lesson', href: `#/learn/${lesson.id}`, title: 'Review last lesson' }
+    : pos !== undefined
+      ? { label: 'Continue lesson', href: `#/learn/${lesson.id}`, title: 'Continue learning' }
+      : { label: 'Start lesson', href: `#/learn/${lesson.id}`, title: 'Start learning' };
+
   return (
     <>
-      <section className="hero" aria-labelledby="hero-title">
-        <LevelRing level={lv.level} fraction={lv.fraction} />
-        <div>
-          <h1 id="hero-title">{first ? 'Welcome to Elementa' : `Welcome back, ${lv.title.toLowerCase()}`}</h1>
-          <p>{first ? 'Explore the elements, see inside the atom and practise for WASSCE chemistry. Earn XP as you learn.' : `${lv.toNext} XP to level ${lv.level + 1}. Keep going.`}</p>
-          <div className="hero-stats">
-            <span className="pill"><Zap size={16} aria-hidden="true" /> {xp} XP</span>
-            <span className={`pill${days > 0 ? ' hot' : ''}`}><Flame size={16} aria-hidden="true" /> {days > 0 ? `${days}-day streak${activeToday(progress, today) ? '' : ': study today to keep it'}` : 'No streak yet'}</span>
-            <span className="pill"><Medal size={16} aria-hidden="true" /> {earned} of {allBadges.length} badges</span>
+      <section className="hero dashboard-hero" aria-labelledby="hero-title">
+        <div className="hero-main">
+          <div className="hero-copy">
+            <p className="eyebrow">Learning dashboard</p>
+            <h1 id="hero-title">{first ? 'Welcome to Elementa' : `Welcome back, ${lv.title.toLowerCase()}`}</h1>
+            <p className="hero-subtitle">
+              {first
+                ? 'Explore atoms, patterns and reactions. Build confidence one concept at a time.'
+                : `${lv.toNext} XP to level ${lv.level + 1}. Keep going.`}
+            </p>
           </div>
-          <div className="xp-line">
-            <progress className="bar" value={lv.into} max={lv.span} aria-label={`Level progress: ${lv.into} of ${lv.span} XP`} />
+          <div className="hero-actions">
+            <a className="btn primary" href={nextAction.href}>{nextAction.label} <ArrowRight size={16} aria-hidden="true" /></a>
+            <a className="btn" href="#/lab">Open lab</a>
+          </div>
+        </div>
+
+        <div className="hero-side">
+          <LevelRing level={lv.level} fraction={lv.fraction} />
+          <div className="mini-stats">
+            <div className="mini-stat">
+              <span className="mini-label"><Zap size={14} aria-hidden="true" /> XP</span>
+              <strong>{xp}</strong>
+            </div>
+            <div className="mini-stat">
+              <span className="mini-label"><Flame size={14} aria-hidden="true" /> Streak</span>
+              <strong>{days > 0 ? `${days} days` : 'Start today'}</strong>
+            </div>
+            <div className="mini-stat">
+              <span className="mini-label"><Medal size={14} aria-hidden="true" /> Badges</span>
+              <strong>{earned}/{allBadges.length}</strong>
+            </div>
           </div>
         </div>
       </section>
@@ -109,12 +138,15 @@ export function Home() {
       <div className="home-cols">
         <div className="stack">
           <section className="card continue o2" aria-labelledby="cont-title">
-            <h2 id="cont-title">{done ? 'Lesson complete' : pos !== undefined ? 'Continue learning' : 'Start learning'}</h2>
+            <div className="section-head" style={{ margin: 0 }}>
+              <h2 id="cont-title">{nextAction.title}</h2>
+              <span className="tag">Next up</span>
+            </div>
             <p className="big-line">{lesson.title}</p>
             <p className="muted">{lesson.summary}</p>
             {pos !== undefined && !done && <progress className="bar" value={pos + 1} max={lesson.sections.length} aria-label={`Lesson progress: section ${pos + 1} of ${lesson.sections.length}`} />}
             {lessonBest !== null && <p className="small muted">Quiz best {lessonBest}%{lessonMastery !== null ? `. Mastery estimate ${lessonMastery}%` : ''}.</p>}
-            <p><a className="btn primary" href={`#/learn/${lesson.id}`}>{done ? 'Review lesson' : pos !== undefined ? 'Continue lesson' : 'Start lesson'} <ArrowRight size={16} aria-hidden="true" /></a></p>
+            <p><a className="btn primary" href={nextAction.href}>{nextAction.label} <ArrowRight size={16} aria-hidden="true" /></a></p>
           </section>
 
           <section className="o4" aria-labelledby="prac-title">
@@ -156,12 +188,12 @@ export function Home() {
 
         <div className="stack">
           <section className="card o1" aria-labelledby="quest-title">
-            <div className="section-head" style={{ margin: 0 }}><h2 id="quest-title"><Target size={18} aria-hidden="true" style={{ verticalAlign: -3 }} /> Today’s quests</h2><span className="quest-meta">{questsDone} of {todayQuests.length}</span></div>
+            <div className="section-head" style={{ margin: 0 }}><h2 id="quest-title"><Target size={18} aria-hidden="true" style={{ verticalAlign: -3 }} /> Today’s quests</h2><span className="tag">{questsDone}/{todayQuests.length}</span></div>
             <progress className="bar" value={questsDone} max={todayQuests.length} aria-label={`${questsDone} of ${todayQuests.length} quests done today`} />
             <ul className="quest-list">
               {todayQuests.map((q) => (
                 <li key={q.id}>
-                  <a className="quest" data-done={q.done} href={q.id === 'daily' ? '#/' : q.href} onClick={q.id === 'daily' ? (e) => { e.preventDefault(); document.getElementById('daily-title')?.scrollIntoView({ block: 'center' }); } : undefined}>
+                  <a className="quest" data-done={q.done} href={q.id === 'daily' ? '#/' : q.href} onClick={q.id === 'daily' ? (e) => { e.preventDefault(); document.getElementById('daily-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); } : undefined}>
                     <span className="tick" aria-hidden="true"><Check size={16} /></span>
                     <span><b>{q.title}</b><small>{q.done ? 'Done today' : q.detail}</small></span>
                     <span className="sr-only">{q.done ? 'Completed' : 'Not done yet'}</span>
