@@ -131,17 +131,6 @@
   letter-spacing: -0.045em;
 }
 .home-hero-copy > p { max-width: 58ch; color: var(--muted); font-size: 1rem; line-height: 1.65; }
-.home-hero-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 18px;
-  color: var(--accent-ink);
-  font-size: 0.94rem;
-  font-weight: 700;
-  text-decoration: none;
-}
-.home-hero-link:hover { gap: 12px; }
 .home-level {
   display: flex;
   align-items: center;
@@ -397,6 +386,6 @@
   .home-achievements > summary { padding: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .home-hero-link, .section-link, .home-practice .tile-card { transition: none; }
+  .section-link, .home-practice .tile-card { transition: none; }
 }
 
