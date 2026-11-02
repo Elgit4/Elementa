@@ -48,7 +48,7 @@ function Shell() {
     <div className="shell">
       <a className="skip" href="#main" onClick={(e) => { e.preventDefault(); mainRef.current?.focus(); }}>Skip to content</a>
       <aside className="rail">
-        <a className="brand" href="#/" aria-label="Elementa home"><img src="/brand-mark.svg" alt="" /></a>
+        <a className="brand" href="#/" aria-label="Elementa home"><img src="/brand-mark.png" alt="" /></a>
         <nav className="nav" aria-label="Main">
           {NAV.map(({ id, label, Icon }) => (
             <a key={id} href={`#/${id}`} aria-current={section === id ? 'page' : undefined}>
@@ -65,6 +65,7 @@ function Shell() {
         </div>
       </aside>
       <main id="main" ref={mainRef} tabIndex={-1}>
+        <div className="app-brand"><img src="/brand-lockup.png" alt="Elementa — Explore, Understand, Discover" /></div>
         <OfflineStatus />
         {storageWarning && <div className="banner warn" role="alert">{storageWarning}</div>}
         <Suspense fallback={<PageLoader />}>{screen}</Suspense>
