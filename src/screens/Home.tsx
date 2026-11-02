@@ -117,7 +117,6 @@ export function Home() {
           <p>{first
             ? 'Explore the elements, understand what happens inside atoms, and build confidence through practice.'
             : `${lv.toNext} XP to reach level ${lv.level + 1}. Keep your momentum with one focused study session.`}</p>
-          <a className="home-hero-link" href={`#/learn/${lesson.id}`}>{lessonLabel} <ArrowRight size={16} aria-hidden="true" /></a>
         </div>
         <div className="home-level">
           <LevelRing level={lv.level} fraction={lv.fraction} />
@@ -215,7 +214,7 @@ export function Home() {
           <ul className="quest-list">
             {todayQuests.map((q) => (
               <li key={q.id}>
-                <a className="quest" data-done={q.done} href={q.id === 'daily' ? '#/' : q.href} onClick={q.id === 'daily' ? (e) => { e.preventDefault(); document.getElementById('daily-title')?.scrollIntoView({ block: 'center', behavior: 'smooth' }); } : undefined}>
+                <a className="quest" data-done={q.done} href={q.id === 'daily' ? '#/' : q.href} onClick={q.id === 'daily' ? (e) => { e.preventDefault(); document.getElementById('daily-title')?.scrollIntoView({ block: 'center' }); } : undefined}>
                   <span className="tick" aria-hidden="true"><Check size={15} /></span>
                   <span className="quest-copy"><b>{q.title}</b><small>{q.done ? 'Completed today' : q.detail}</small></span>
                   <ArrowRight className="quest-arrow" size={15} aria-hidden="true" />
