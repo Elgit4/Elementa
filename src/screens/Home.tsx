@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, Atom, BookOpen, Check, Clock3, FlaskConical, Flame, Lock, Medal, Scale, Target, TrendingUp, Zap } from 'lucide-react';
+import { ArrowRight, Atom, BookOpen, Check, Clock3, FlaskConical, Flame, Lock, Medal, Scale, TrendingUp, Zap } from 'lucide-react';
 import { LESSONS } from '../data/lessons';
 import { getElement } from '../data';
 import { bestScore, dayKey, mastery, recordDaily } from '../engine/progress';
