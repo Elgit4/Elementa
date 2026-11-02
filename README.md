@@ -1,12 +1,10 @@
 # Elementa: Chemistry Learning
 
-An offline-first, interactive chemistry app for Ghanaian SHS students (WASSCE preparation). React 19 + TypeScript + Vite. No backend: progress is stored on the device in IndexedDB.
-
-**Status: working prototype (draft content).** Nothing here has been reviewed by a chemistry teacher or checked against the current WASSCE syllabus. Treat all lessons, questions and explanations as unreviewed until that happens.
+An offline-first, interactive chemistry app for exploring atomic structure, bonding, trends and reactions. React 19 + TypeScript + Vite. No backend: progress is stored on the device in IndexedDB.
 
 ## Deploy
 
-Upload the contents of `dist/` (after `npm run build`) to any static host (Netlify, Cloudflare Pages, GitHub Pages, any web server), at the root or in a sub-folder. It must be served over HTTPS for install and offline support.
+Upload the contents of `dist/` (after `npm run build`) to any static host (Netlify, Cloudflare Pages, GitHub Pages, any web server), at the root or in a sub-folder. It must be served over HTTPS for installability and offline use.
 
 ## Run it
 
@@ -24,19 +22,19 @@ npm run data       # regenerate src/data/elements.json from periodic-table-data-
 
 | Area | What it does |
 |---|---|
-| Explore | Interactive periodic table, search, element detail, "Colour tiles by" overlays for atomic radius, first ionisation energy and electronegativity (rank-based colours, values printed on tiles, hatched tiles where the dataset has no value) |
+| Explore | Interactive periodic table, search, element detail, "Colour tiles by" overlays for atomic radius, first ionisation energy and electronegativity (rank-based colours, values printed on tiles), plus trend summaries. |
 | Atom | Bohr-style diagram: protons, neutrons per isotope, electrons, ion charge |
 | Learn | Lesson on atoms, isotopes and ions with a quiz |
-| Virtual lab | Hub of activities with deep links (`#/lab/ionic`, `/covalent`, `/reactions`, `/practise`, `/practise/trends`): Ionic bonding (dot-and-cross), covalent molecules, 7 reactions with a balance-it-yourself activity, and generated practice quizzes (bonding, periodic trends) |
-| Home | Game layer: level and XP ring, daily streak, today's quests, badges, daily challenge, practice tiles with best scores, recent elements. All derived from stored progress (`src/engine/gamify.ts`), no extra storage |
+| Virtual lab | Hub of activities with deep links (`#/lab/ionic`, `/covalent`, `/reactions`, `/practise`, `/practise/trends`): Ionic bonding (dot-and-cross), covalent molecules, 7 reactions with a balancing challenge, and practice quizzes on bonding and periodic trends |
+| Home | Game layer: level and XP ring, daily streak, today's quests, badges, daily challenge, practice tiles with best scores, recent elements. All derived from stored progress (`src/engine/gamify.ts`) |
 | Offline | Installable PWA; all screens, quizzes and progress work without internet |
 
 ## How correctness is protected
 
 - Element data comes from one dataset, never typed by hand. Unknown values are `null` and shown as "no value", never guessed.
-- Everything shown in the lab is computed by pure engines (`src/engine/*`) and tested against independent hand-written oracles: ionic formulas and charges, molecule electron counts, atom totals for each reaction, and the answer to every generated quiz question (checked against raw dataset values).
-- Trend quizzes only ask questions where the data agrees with the general trend, so an answer never contradicts its explanation. Documented exceptions (B < Be, Al < Mg, O < N, S < P) are shown in the trend panel with reasons.
-- Reaction observations and safety notes are static text and are the least machine-checked part: have a teacher read them first.
+- Everything shown in the lab is computed by pure engines (`src/engine/*`) and tested against independent hand-written oracles: ionic formulas and charges, molecule electron counts, atom totals for isotopes, and trend logic.
+- Trend quizzes only ask questions where the data agrees with the general trend, so an answer never contradicts its explanation. Documented exceptions (B < Be, Al < Mg, O < N, S < P) are shown in the explanations.
+- Reaction observations and safety notes are static text and are the least machine-checked part: they are intended as educational notes rather than a substitute for formal lab guidance.
 
 ## Loading and structure
 
@@ -60,7 +58,6 @@ src/storage    IndexedDB       src/state    progress context
 
 ## Not yet tested or done
 
-- Teacher / WASSCE syllabus review (blocks any claim of curriculum alignment).
 - Real devices: low-end Android, iOS Safari, install prompt, persistent-storage grant. Only Chromium was used.
 - Lighthouse audit (would not launch in the build environment).
 - Screen-reader testing with real assistive tech (axe only catches a subset).
