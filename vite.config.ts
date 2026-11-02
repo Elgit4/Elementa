@@ -10,7 +10,7 @@ export default defineConfig({
     VitePWA({
       // Prompt (not auto-update) so a student is never reloaded mid-quiz and stale caches are replaced deliberately.
       registerType: 'prompt',
-      includeAssets: ['brand-mark.png', 'brand-lockup.png'],
+      includeAssets: ['brand-mark.png'],
       manifest: {
         name: 'Elementa: Chemistry Learning',
         short_name: 'Elementa',
