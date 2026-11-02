@@ -10,20 +10,18 @@ export default defineConfig({
     VitePWA({
       // Prompt (not auto-update) so a student is never reloaded mid-quiz and stale caches are replaced deliberately.
       registerType: 'prompt',
-      includeAssets: ['favicon.svg', 'icon.svg', 'apple-touch-icon.png'],
+      includeAssets: ['brand-mark.png', 'brand-lockup.png'],
       manifest: {
         name: 'Elementa: Chemistry Learning',
         short_name: 'Elementa',
         description: 'Interactive chemistry learning for Ghanaian SHS students. Works offline.',
-        theme_color: '#101828',
-        background_color: '#101828',
+        theme_color: '#172D42',
+        background_color: '#172D42',
         display: 'standalone',
         start_url: './',
         scope: './',
         icons: [
-          { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'pwa-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'brand-mark.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
         ],
       },
       workbox: {
