@@ -7,7 +7,7 @@ import { dailyQuestion } from '../engine/daily';
 import { evaluate } from '../engine/quiz';
 import { BONDING_QUIZ_ID } from '../engine/bondingQuiz';
 import { TRENDS_QUIZ_ID } from '../engine/trendsQuiz';
-import { badges, levelInfo, quests, streak, totalXp, activeToday } from '../engine/gamify';
+import { badges, levelInfo, quests, streak, totalXp } from '../engine/gamify';
 import { PageSkeleton, Skeleton } from '../components/Loading';
 import { useProgress } from '../state/ProgressContext';
 
@@ -161,7 +161,7 @@ export function Home() {
             {pos !== undefined && !done && <span>Section {Math.min(pos + 1, lesson.sections.length)} of {lesson.sections.length}</span>}
             {lessonBest !== null && <span>Quiz best {lessonBest}%{lessonMastery !== null ? ` · Mastery ${lessonMastery}%` : ''}</span>}
           </div>
-          {pos !== undefined && !done && <progress className="bar lesson-progress" value={Math.min(pos + 1, lesson.sections.length)} max={lesson.sections.length} aria-label={`Lesson progress: section ${pos + 1} of ${lesson.sections.length}`} />}
+          {pos !== undefined && !done && <progress className="bar lesson-progress" value={Math.min(pos + 1, lesson.sections.length)} max={lesson.sections.length} aria-label={`Lesson progress: section ${Math.min(pos + 1, lesson.sections.length)} of ${lesson.sections.length}`} />}
         </div>
         <a className="btn primary next-lesson-action" href={`#/learn/${lesson.id}`}>{lessonLabel} <ArrowRight size={16} aria-hidden="true" /></a>
       </section>
