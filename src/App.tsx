@@ -69,6 +69,9 @@ function Shell() {
         <OfflineStatus />
         {storageWarning && <div className="banner warn" role="alert">{storageWarning}</div>}
         <Suspense fallback={<PageLoader />}>{screen}</Suspense>
+        <footer className="app-credit" aria-label="Application credit">
+          Powered by <strong>ElTech</strong>
+        </footer>
       </main>
     </div>
   );
