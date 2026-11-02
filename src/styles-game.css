@@ -97,3 +97,306 @@
 /* On narrow screens the two columns merge and the quick wins (quests, daily) come before the long lists. */
 .o1 { order: 1; } .o2 { order: 2; } .o3 { order: 3; } .o4 { order: 4; } .o5 { order: 5; } .o6 { order: 6; }
 @media (max-width: 900px) { .home-cols { display: flex; flex-direction: column; gap: 16px; } .home-cols .stack { display: contents; } }
+
+/* ───────── Home dashboard refresh ───────── */
+.home-screen {
+  display: grid;
+  gap: 22px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+.home-hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 330px);
+  align-items: center;
+  gap: 24px 32px;
+  overflow: hidden;
+  padding: clamp(22px, 3vw, 34px);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 36%),
+    var(--surface);
+}
+.home-hero-copy { min-width: 0; position: relative; z-index: 1; }
+.home-hero-copy .eyebrow { margin-bottom: 9px; }
+.home-hero-copy h1 {
+  max-width: 20ch;
+  margin: 0 0 10px;
+  font-size: clamp(1.8rem, 1.35rem + 1.6vw, 2.55rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+.home-hero-copy > p { max-width: 58ch; color: var(--muted); font-size: 1rem; line-height: 1.65; }
+.home-hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  color: var(--accent-ink);
+  font-size: 0.94rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.home-hero-link:hover { gap: 12px; }
+.home-level {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: color-mix(in oklab, var(--surface-2) 88%, transparent);
+}
+.home-level-ring { width: 86px; height: 86px; flex: none; }
+.home-level-ring .ring-label b { font-size: 1.55rem; }
+.home-level-ring .ring-label span { font-size: 0.62rem; }
+.home-level-copy { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 3px; }
+.home-level-label { color: var(--muted); font-size: 0.68rem; font-weight: 750; letter-spacing: 0.09em; }
+.home-level-copy strong { font-size: 1.05rem; line-height: 1.25; }
+.home-level-copy > span:last-of-type { color: var(--muted); font-size: 0.8rem; }
+.home-level-bar { margin: 7px 0 0; height: 6px; }
+.home-stats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.home-stat { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.home-stat + .home-stat { border-left: 1px solid var(--border); padding-left: 18px; }
+.home-stat-icon {
+  display: grid;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 11px;
+  color: var(--accent-ink);
+  background: color-mix(in oklab, var(--accent) 13%, var(--surface-2));
+}
+.home-stat-icon.streak-icon { color: #f59e0b; background: color-mix(in oklab, #f59e0b 12%, var(--surface-2)); }
+.home-stat-icon.badge-icon { color: #a78bfa; background: color-mix(in oklab, #a78bfa 12%, var(--surface-2)); }
+.home-stat > span:last-child { display: grid; gap: 1px; min-width: 0; }
+.home-stat small { color: var(--muted); font-size: 0.77rem; }
+.home-stat strong { font-size: 1.02rem; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.stat-total { color: var(--muted); font-size: 0.82rem; font-weight: 550; }
+
+.next-lesson {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px 24px;
+  padding: clamp(20px, 2.7vw, 28px);
+  border-left: 4px solid var(--accent);
+  border-radius: 16px;
+}
+.next-lesson-main { min-width: 0; }
+.next-lesson-main > .eyebrow { margin-bottom: 8px; }
+.next-lesson-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.next-lesson-title-row h2 { font-size: clamp(1.1rem, 1rem + 0.45vw, 1.35rem); }
+.next-lesson-name { margin-top: 4px; font-size: 1.08rem; font-weight: 700; }
+.lesson-status {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  min-height: 26px;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+.lesson-status.is-progress { color: var(--accent-ink); border-color: color-mix(in oklab, var(--accent) 45%, var(--border)); background: color-mix(in oklab, var(--accent) 9%, var(--surface)); }
+.lesson-status.is-done { color: var(--good); border-color: color-mix(in oklab, var(--good) 40%, var(--border)); background: var(--good-bg); }
+.next-lesson-summary { max-width: 76ch; margin-top: 8px; color: var(--muted); font-size: 0.9rem; }
+.lesson-facts { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 13px; color: var(--muted); font-size: 0.8rem; }
+.lesson-facts span { display: inline-flex; align-items: center; gap: 6px; }
+.lesson-facts svg { color: var(--accent-ink); }
+.lesson-progress { max-width: 420px; margin-top: 10px; }
+.next-lesson-action { white-space: nowrap; min-width: 154px; }
+
+.home-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(290px, 0.9fr);
+  grid-template-areas:
+    "practice quests"
+    "practice daily"
+    "achievements recent";
+  align-items: start;
+  gap: 18px;
+}
+.home-practice { grid-area: practice; min-width: 0; }
+.home-quests { grid-area: quests; min-width: 0; }
+.home-daily { grid-area: daily; min-width: 0; }
+.home-achievements { grid-area: achievements; min-width: 0; }
+.home-recent { grid-area: recent; min-width: 0; }
+.home-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 2px 0 15px;
+}
+.home-section-heading h2 { margin-top: 1px; font-size: 1.2rem; }
+.home-section-heading p { max-width: 52ch; margin-top: 5px; color: var(--muted); font-size: 0.88rem; }
+.home-section-heading .eyebrow { margin-bottom: 4px; }
+.section-link {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 2px;
+  color: var(--accent-ink);
+  font-size: 0.86rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+.section-link:hover { gap: 10px; }
+.home-practice .practice-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 11px; }
+.home-practice .tile-card {
+  min-height: 212px;
+  padding: 17px;
+  gap: 7px;
+  border-radius: 15px;
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--text) 3%, transparent);
+}
+.home-practice .tile-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 8px 24px color-mix(in oklab, var(--text) 8%, transparent); }
+.home-practice .tile-card .ico { width: 40px; height: 40px; border-radius: 12px; }
+.home-practice .tile-card .trends-ico { color: #8b5cf6; background: color-mix(in oklab, #8b5cf6 13%, var(--surface-2)); }
+.home-practice .tile-card .reactions-ico { color: #16a085; background: color-mix(in oklab, #16a085 13%, var(--surface-2)); }
+.practice-card-label { color: var(--muted); font-size: 0.65rem; font-weight: 750; letter-spacing: 0.1em; }
+.home-practice .tile-card h3 { margin-top: 2px; font-size: 1rem; }
+.home-practice .tile-card p { flex: 1; min-height: 3.8em; line-height: 1.5; }
+.home-practice .tile-foot { padding-top: 9px; border-top: 1px solid var(--border); font-size: 0.78rem; }
+.mastery-note { margin-top: 11px; color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+
+.home-quests, .daily-challenge, .home-recent { padding: 19px; border-radius: 16px; }
+.home-card-heading { align-items: flex-start; margin: 0 0 11px; }
+.home-card-heading .eyebrow { margin-bottom: 4px; }
+.home-card-heading h2 { font-size: 1.08rem; }
+.home-card-heading p { margin-top: 3px; color: var(--muted); font-size: 0.8rem; }
+.home-card-heading .quest-meta { flex: none; padding: 4px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text); font-variant-numeric: tabular-nums; }
+.quest-progress { height: 6px; margin: 0 0 12px; }
+.home-quests .quest-list { gap: 7px; }
+.home-quests .quest { min-height: 57px; padding: 9px 10px; gap: 10px; }
+.home-quests .quest .tick { width: 25px; height: 25px; }
+.quest-copy { flex: 1; min-width: 0; }
+.quest-copy b { font-size: 0.82rem; line-height: 1.35; }
+.quest-copy small { display: block; margin-top: 2px; font-size: 0.73rem; }
+.quest-arrow { flex: none; color: var(--muted); opacity: 0.7; }
+.home-quests .quest:hover .quest-arrow { color: var(--accent-ink); opacity: 1; }
+
+.daily-challenge { height: 100%; }
+.challenge-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.challenge-heading .eyebrow { margin-bottom: 4px; }
+.challenge-heading h2 { font-size: 1.08rem; }
+.challenge-mark { display: grid; flex: none; width: 34px; height: 34px; place-items: center; border-radius: 10px; color: var(--accent-ink); background: color-mix(in oklab, var(--accent) 13%, var(--surface-2)); }
+.daily-q { margin: 15px 0 12px; font-size: 0.96rem; font-weight: 600; line-height: 1.55; }
+.challenge-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.challenge-choices .chip { justify-content: flex-start; width: 100%; min-height: 42px; padding: 8px 11px; border-radius: 10px; white-space: normal; text-align: left; font-size: 0.82rem; line-height: 1.35; }
+.challenge-feedback:empty { display: none; }
+.challenge-feedback .feedback { margin-top: 12px; font-size: 0.82rem; line-height: 1.5; }
+.challenge-feedback .muted { display: block; margin-top: 12px; }
+
+.home-achievements { padding: 0; overflow: hidden; }
+.home-achievements > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 62px;
+  padding: 15px 18px;
+  cursor: pointer;
+  list-style: none;
+}
+.home-achievements > summary::-webkit-details-marker { display: none; }
+.home-achievements > summary::marker { content: ''; }
+.achievement-title { display: inline-flex; align-items: center; gap: 9px; font-weight: 650; }
+.achievement-title svg { color: var(--accent-ink); }
+.achievement-meta { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); font-size: 0.8rem; }
+.achievement-toggle { color: var(--accent-ink); font-weight: 650; }
+.home-achievements[open] > summary { border-bottom: 1px solid var(--border); }
+.home-achievements .badge-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; padding: 12px; }
+.home-achievements .badge { min-width: 0; padding: 10px 6px; border-radius: 11px; }
+.home-achievements .badge .medal { width: 34px; height: 34px; }
+.home-achievements .badge b { font-size: 0.75rem; line-height: 1.3; }
+.home-achievements .badge small { display: none; }
+
+.home-recent .section-head { margin: 0 0 11px; }
+.home-recent .home-card-heading h2 { font-size: 1.08rem; }
+.recent-empty { font-size: 0.84rem; line-height: 1.55; }
+.recent-chips { gap: 6px; }
+.recent-chips .chip { min-height: 34px; padding: 4px 10px; font-size: 0.78rem; }
+.recent-atom-link {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+  color: var(--accent-ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.recent-atom-link:hover { text-decoration: underline; }
+
+@media (max-width: 980px) {
+  .home-columns {
+    grid-template-columns: minmax(0, 1fr) minmax(270px, 0.85fr);
+  }
+  .home-practice .practice-grid { grid-template-columns: 1fr; }
+  .home-practice .tile-card { min-height: 0; }
+  .home-practice .tile-card p { min-height: 0; }
+}
+@media (max-width: 760px) {
+  .home-columns {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "quests"
+      "daily"
+      "practice"
+      "recent"
+      "achievements";
+    gap: 14px;
+  }
+  .home-practice .practice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .home-screen { gap: 16px; }
+  .home-hero { grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 21px 18px; border-radius: 17px; }
+  .home-hero-copy h1 { font-size: clamp(1.8rem, 8vw, 2.3rem); }
+  .home-level { padding: 12px; }
+  .home-stats { gap: 8px; padding-top: 14px; }
+  .home-stat { align-items: flex-start; gap: 7px; }
+  .home-stat + .home-stat { padding-left: 9px; }
+  .home-stat-icon { width: 30px; height: 30px; border-radius: 9px; }
+  .home-stat-icon svg { width: 16px; height: 16px; }
+  .home-stat small { font-size: 0.68rem; }
+  .home-stat strong { font-size: 0.9rem; }
+  .next-lesson { grid-template-columns: minmax(0, 1fr); gap: 15px; padding: 19px 17px; }
+  .next-lesson-action { width: 100%; }
+  .home-section-heading { align-items: flex-start; }
+  .home-section-heading p { font-size: 0.82rem; }
+  .home-practice .practice-grid { grid-template-columns: minmax(0, 1fr); }
+  .home-practice .tile-card { display: grid; grid-template-columns: 40px minmax(0, 1fr); grid-template-areas: "icon label" "title title" "description description" "foot foot"; align-items: center; column-gap: 10px; padding: 14px; }
+  .home-practice .tile-card .ico { grid-area: icon; }
+  .home-practice .tile-card .practice-card-label { grid-area: label; }
+  .home-practice .tile-card h3 { grid-area: title; }
+  .home-practice .tile-card p { grid-area: description; }
+  .home-practice .tile-card .tile-foot { grid-area: foot; }
+  .home-quests, .daily-challenge, .home-recent { padding: 16px; }
+  .challenge-choices { grid-template-columns: minmax(0, 1fr); }
+  .home-achievements .badge-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-achievements > summary { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-link, .section-link, .home-practice .tile-card { transition: none; }
+}
+
