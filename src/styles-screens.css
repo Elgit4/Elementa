@@ -295,3 +295,34 @@
 }
 /* Trend colours are chosen for contrast against pure ink, so text on them must not be faded. */
 .ptable[data-mode='trend'] .tile-num, .ptable[data-mode='trend'] .tile-sym, .ptable[data-mode='trend'] .tile-val { opacity: 1; }
+
+
+/* Course -> topic -> lesson learning hierarchy */
+.course-list { display: grid; gap: 18px; max-width: 900px; }
+.course-card { padding: clamp(18px, 3vw, 26px); border-radius: 18px; }
+.course-card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.course-card-heading h2 { margin: 5px 0 6px; font-size: clamp(1.25rem, 1.1rem + .6vw, 1.65rem); }
+.course-card-heading p { max-width: 65ch; font-size: .9rem; line-height: 1.55; }
+.course-count, .topic-meta { flex: none; color: var(--muted); font-size: .78rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.course-progress { height: 6px; margin: 17px 0 21px; overflow: hidden; border-radius: 999px; background: var(--surface-2); }
+.course-progress span { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width .25s ease; }
+.topic-group + .topic-group { margin-top: 23px; padding-top: 20px; border-top: 1px solid var(--border); }
+.topic-heading { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: start; gap: 11px; margin-bottom: 12px; }
+.topic-index { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 10px; color: var(--accent-ink); background: color-mix(in oklab, var(--accent) 12%, var(--surface-2)); font-size: .75rem; font-weight: 750; }
+.topic-heading h3 { font-size: 1rem; }
+.topic-heading p { margin-top: 3px; line-height: 1.45; }
+.topic-heading .topic-meta { padding-top: 7px; }
+.course-card .lesson-list { max-width: none; gap: 10px; }
+.course-card .lesson-card { padding: 15px; border-radius: 13px; }
+.course-card .lesson-card h4 { font-size: .96rem; }
+.course-card .lesson-card .lesson-row { flex: 1 1 300px; display: flex; flex-direction: row; align-items: flex-start; gap: 12px; }
+.course-card .lesson-card .lesson-row > div { min-width: 0; display: grid; gap: 5px; }
+.course-card .lesson-card .btn { flex: none; }
+@media (max-width: 560px) {
+  .course-card { padding: 16px; }
+  .course-card-heading { flex-direction: column; gap: 8px; }
+  .course-count { align-self: flex-start; }
+  .course-card .lesson-card { align-items: stretch; }
+  .course-card .lesson-card .btn { width: 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) { .course-progress span { transition: none; } }
