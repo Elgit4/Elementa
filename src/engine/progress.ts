@@ -80,5 +80,7 @@ export function mastery(p: Progress, quizId: string): number | null {
 export const dayKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 export function recordDaily(p: Progress, key: string, correct: boolean): Progress {
-  return p.daily[key] ? p : { ...p, daily: { ...p.daily, [key]: { correct } } };
+  const previous = p.daily[key];
+  if (previous?.correct || (previous && !correct)) return p;
+  return { ...p, daily: { ...p.daily, [key]: { correct } } };
 }
