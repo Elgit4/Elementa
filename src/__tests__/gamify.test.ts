@@ -54,6 +54,10 @@ describe('streak', () => {
     expect(streak(recordDaily(emptyProgress(), '2026-10-31', true), today)).toBe(1);
     expect(streak(recordDaily(emptyProgress(), '2026-10-30', true), today)).toBe(0);
   });
+  it('does not count an incorrect daily answer as study activity', () => {
+    expect(streak(recordDaily(emptyProgress(), '2026-10-31', false), today)).toBe(0);
+    expect(activeToday(recordDaily(emptyProgress(), '2026-11-01', false), today)).toBe(false);
+  });
   it('a gap breaks it, and quiz attempts count as activity', () => {
     let p = recordDaily(emptyProgress(), '2026-11-01', true);
     p = att(p, 'bonding', D(2026, 10, 30), 5);       // 31 Oct missing
@@ -92,7 +96,10 @@ describe('badges and quests', () => {
   });
   it('daily habit, explorer and first lesson', () => {
     let p = recordDaily(recordDaily(emptyProgress(), '2026-10-01', true), '2026-10-02', false);
-    expect(id(p, 'daily-3')).toBe(false); expect(id(recordDaily(p, '2026-10-03', true), 'daily-3')).toBe(true);
+    expect(id(p, 'daily-3')).toBe(false);
+    p = recordDaily(p, '2026-10-02', true);
+    expect(id(p, 'daily-3')).toBe(false);
+    expect(id(recordDaily(p, '2026-10-03', true), 'daily-3')).toBe(true);
     expect(id({ ...emptyProgress(), recentElements: [1, 2, 3, 4] }, 'explorer')).toBe(false);
     expect(id({ ...emptyProgress(), recentElements: [1, 2, 3, 4, 5] }, 'explorer')).toBe(true);
     expect(id(completeLesson(emptyProgress(), 'atoms'), 'first-lesson')).toBe(true);
@@ -105,7 +112,10 @@ describe('badges and quests', () => {
   it('quests are only done when stored progress proves it', () => {
     const q0 = quests(emptyProgress(), today);
     expect(q0).toHaveLength(3); expect(q0.every((q) => !q.done)).toBe(true);
+    expect(q0.find((q) => q.id === 'daily')!.detail).toBe('+25 XP');
     let p = recordDaily(emptyProgress(), '2026-11-01', false);
+    expect(quests(p, today).find((q) => q.id === 'daily')!.done).toBe(false);
+    p = recordDaily(p, '2026-11-01', true);
     expect(quests(p, today).find((q) => q.id === 'daily')!.done).toBe(true);
     p = att(p, 'bonding', D(2026, 10, 31), 5);                    // yesterday does not count
     expect(quests(p, today).find((q) => q.id === 'practise')!.done).toBe(false);

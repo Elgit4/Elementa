@@ -88,6 +88,80 @@ try {
   // Home and the primary navigation must render.
   await page.goto(`${origin}/#/`, { waitUntil: 'networkidle' });
   assert.equal(await page.locator('main h1').count(), 1, 'Home should render one primary heading');
+
+  // Daily goal opens a modal, can be dismissed, and completes only after a correct answer.
+  const dailyTask = page.locator('.home-quests button.quest');
+  assert.equal(await dailyTask.count(), 1, 'The daily challenge should be an actionable goal');
+  await dailyTask.click();
+  const dailyDialog = page.getByRole('dialog', { name: 'Daily chemistry challenge' });
+  await dailyDialog.waitFor();
+  assert.equal(await dailyDialog.locator('.challenge-choices button').count(), 4,
+    'The daily challenge dialog should show four answer choices');
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(() => !document.querySelector('.daily-challenge-dialog')?.open,
+    null, { timeout: 5_000 });
+  await dailyTask.click();
+  await dailyDialog.waitFor();
+
+  const dailyChoices = dailyDialog.locator('.challenge-choices button');
+  let dailyChallengeSolved = false;
+  let sawIncorrectDailyAnswer = false;
+  for (let i = 0; i < 4; i += 1) {
+    const choice = dailyChoices.nth(i);
+    await choice.click();
+    const state = await choice.getAttribute('data-state');
+    if (state === 'wrong') {
+      sawIncorrectDailyAnswer = true;
+      assert.equal(await dailyDialog.evaluate((dialog) => dialog.open), true,
+        'An incorrect answer must leave the daily challenge open');
+      await dailyDialog.getByText('Not quite.', { exact: false }).waitFor();
+    }
+    if (state === 'right') {
+      dailyChallengeSolved = true;
+      await page.waitForFunction(() => !document.querySelector('.daily-challenge-dialog'),
+        null, { timeout: 5_000 });
+      break;
+    }
+  }
+  assert.equal(dailyChallengeSolved, true, 'The daily challenge should close after a correct answer');
+  const dailyDone = page.locator('.home-quests button.quest[data-done="true"]');
+  await dailyDone.waitFor();
+  assert.equal(await dailyDone.isDisabled(), true, 'A completed daily goal should no longer reopen');
+  await page.waitForFunction(async () => {
+    const dbRequest = indexedDB.open('elementa', 1);
+    const db = await new Promise((resolve, reject) => {
+      dbRequest.onsuccess = () => resolve(dbRequest.result);
+      dbRequest.onerror = () => reject(dbRequest.error);
+    });
+    const request = db.transaction('kv', 'readonly').objectStore('kv').get('progress');
+    const progress = await new Promise((resolve, reject) => {
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    db.close();
+    const now = new Date();
+    const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    return progress?.daily?.[key]?.correct === true;
+  }, null, { timeout: 10_000 });
+  const dailyRecord = await page.evaluate(async () => {
+    const dbRequest = indexedDB.open('elementa', 1);
+    const db = await new Promise((resolve, reject) => {
+      dbRequest.onsuccess = () => resolve(dbRequest.result);
+      dbRequest.onerror = () => reject(dbRequest.error);
+    });
+    const request = db.transaction('kv', 'readonly').objectStore('kv').get('progress');
+    const progress = await new Promise((resolve, reject) => {
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    db.close();
+    const now = new Date();
+    const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    return progress?.daily?.[key] ?? null;
+  });
+  assert.deepEqual(dailyRecord, { correct: true }, 'Only a correct daily answer should be saved as completed');
+  console.log(`Daily task smoke: incorrect answer kept popup open${sawIncorrectDailyAnswer ? '' : ' (first choice was correct)'}, correct answer closed it.`);
+
   await page.locator('.nav a[href="#/learn"]').click();
   await page.getByRole('heading', { name: 'Your chemistry courses' }).waitFor();
 
@@ -187,7 +261,7 @@ try {
   await page.getByRole('heading', { name: 'Virtual lab', exact: true }).waitFor();
 
   assert.deepEqual(failures, [], 'The browser must not raise uncaught page errors');
-  console.log('Browser smoke tests passed: first-run mobile CLS, offline status, learning flow, saved progress, mobile layout, theme, Explore, Atomic Explorer, ionic/covalent activities, reaction balancing, both quiz routes, Practice and Lab hubs.');
+  console.log('Browser smoke tests passed: first-run mobile CLS, offline status, daily challenge modal/retry/completion, learning flow, saved progress, mobile layout, theme, Explore, Atomic Explorer, ionic/covalent activities, reaction balancing, both quiz routes, Practice and Lab hubs.');
 } finally {
   if (browser) await browser.close();
   server.kill('SIGTERM');

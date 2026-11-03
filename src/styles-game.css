@@ -216,14 +216,13 @@
   grid-template-columns: minmax(0, 1.25fr) minmax(290px, 0.9fr);
   grid-template-areas:
     "practice quests"
-    "practice daily"
-    "achievements recent";
+    "practice recent"
+    "achievements achievements";
   align-items: start;
   gap: 18px;
 }
 .home-practice { grid-area: practice; min-width: 0; }
 .home-quests { grid-area: quests; min-width: 0; }
-.home-daily { grid-area: daily; min-width: 0; }
 .home-achievements { grid-area: achievements; min-width: 0; }
 .home-recent { grid-area: recent; min-width: 0; }
 .home-section-heading {
@@ -349,7 +348,6 @@
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "quests"
-      "daily"
       "practice"
       "recent"
       "achievements";
@@ -606,4 +604,125 @@
   .practice-guidance .row .btn { width: 100%; }
   .explore-tools { align-items: stretch; flex-direction: column; }
   .explore-tools .btn { width: 100%; }
+}
+
+
+/* Daily challenge dialog */
+.home-quests button.quest {
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.home-quests button.quest:disabled {
+  cursor: default;
+  opacity: 0.82;
+}
+.daily-challenge-dialog {
+  width: min(540px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  color: var(--text);
+  background: transparent;
+}
+.daily-challenge-dialog::backdrop {
+  background: rgb(5 13 23 / 62%);
+  backdrop-filter: blur(4px);
+}
+.daily-challenge-dialog[open] {
+  animation: daily-dialog-enter 180ms ease-out both;
+}
+.daily-challenge-panel {
+  position: relative;
+  height: auto;
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  margin: 0;
+  padding: clamp(20px, 4vw, 28px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 24px 80px rgb(0 0 0 / 32%);
+}
+.daily-challenge-panel .challenge-heading {
+  align-items: flex-start;
+  padding-right: 34px;
+}
+.daily-challenge-panel .challenge-heading h2 {
+  font-size: clamp(1.15rem, 1rem + 0.7vw, 1.4rem);
+}
+.daily-challenge-intro {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.daily-challenge-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--muted);
+  background: var(--surface-2);
+  cursor: pointer;
+}
+.daily-challenge-close:hover {
+  color: var(--text);
+  background: var(--surface-3);
+}
+.daily-challenge-panel .daily-q {
+  margin-top: 18px;
+  font-size: clamp(1.05rem, 0.96rem + 0.5vw, 1.22rem);
+  line-height: 1.45;
+}
+.daily-challenge-panel .challenge-choices {
+  margin-top: 16px;
+}
+.daily-challenge-panel .challenge-choices .chip {
+  min-height: 48px;
+  font-size: 0.92rem;
+}
+.daily-challenge-panel .challenge-feedback .feedback {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+.daily-challenge-hint {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.daily-challenge-success {
+  color: var(--accent-ink);
+}
+@keyframes daily-dialog-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (max-width: 520px) {
+  .daily-challenge-dialog {
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+  }
+  .daily-challenge-panel {
+    max-height: calc(100dvh - 24px);
+    padding: 20px 16px;
+    border-radius: 17px;
+  }
+  .daily-challenge-panel .challenge-choices {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .daily-challenge-dialog[open] { animation: none; }
 }
