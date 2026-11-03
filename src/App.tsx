@@ -30,7 +30,7 @@ function Shell() {
   const first = useRef(true);
 
   useEffect(() => {
-    document.title = `${TITLES[section] ?? 'Not found'} · Elementa`;
+    document.title = `${TITLES[activeSection] ?? 'Not found'} · Elementa`;
     if (first.current) { first.current = false; return; }
     mainRef.current?.focus({ preventScroll: true });
   }, [section]);
