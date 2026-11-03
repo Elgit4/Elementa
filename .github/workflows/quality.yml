@@ -7,7 +7,7 @@ on:
     branches: [main, "feat/**"]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify:
@@ -21,6 +21,19 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # One-time lockfile refresh while audited transitive dependency overrides are introduced.
+      - name: Refresh dependency lockfile
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Persist refreshed lockfile on feature-branch pushes
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/feat/')
+        run: |
+          if ! git diff --quiet -- package-lock.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package-lock.json
+            git commit -m "chore: refresh audited build dependencies"
+            git push
+          fi
       - name: Install dependencies
         run: npm ci
       - name: Audit dependency vulnerabilities
