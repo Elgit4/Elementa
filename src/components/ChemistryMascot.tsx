@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useId, type CSSProperties } from 'react';
 
 type MascotMood = 'curious' | 'cheer' | 'think' | 'focus';
 
@@ -11,32 +11,33 @@ const expressions: Record<MascotMood, { mouth: string; brow: string; arm: string
 
 export function ChemistryMascot({ mood = 'curious', size = 150, className = '' }: { mood?: MascotMood; size?: number; className?: string }) {
   const face = expressions[mood];
+  const uid = useId().replace(/:/g, '');
   const style = { width: size, height: 'auto', '--mascot-size': `${size}px` } as CSSProperties;
   return (
     <svg className={`chem-mascot ${className}`} style={style} viewBox="0 0 240 230" role="img" aria-label={mood === 'cheer' ? 'Chemistry student mascot celebrating' : mood === 'think' ? 'Chemistry student mascot thinking' : mood === 'focus' ? 'Chemistry student mascot studying' : 'Curious chemistry student mascot'}>
       <defs>
-        <linearGradient id="coat" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#f8fcff"/><stop offset="1" stopColor="#cbdbea"/></linearGradient>
-        <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#a95d3c"/><stop offset="1" stopColor="#713b2d"/></linearGradient>
-        <linearGradient id="flask" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#a5fff0"/><stop offset="1" stopColor="#20b8aa"/></linearGradient>
-        <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#293342"/><stop offset="1" stopColor="#101827"/></linearGradient>
+        <linearGradient id={`${uid}-coat`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#f8fcff"/><stop offset="1" stopColor="#cbdbea"/></linearGradient>
+        <linearGradient id={`${uid}-skin`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#a95d3c"/><stop offset="1" stopColor="#713b2d"/></linearGradient>
+        <linearGradient id={`${uid}-flask`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#a5fff0"/><stop offset="1" stopColor="#20b8aa"/></linearGradient>
+        <linearGradient id={`${uid}-hair`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#293342"/><stop offset="1" stopColor="#101827"/></linearGradient>
       </defs>
       <ellipse cx="119" cy="211" rx="67" ry="10" fill="#061827" opacity=".14"/>
       <circle cx="118" cy="112" r="94" fill="#22c7b7" opacity=".09"/>
       <circle cx="192" cy="49" r="13" fill="#f4b84a" opacity=".8"/>
-      <path d="M58 201 Q61 158 88 146 L151 146 Q181 157 185 201Z" fill="url(#coat)" stroke="#a9bfd2" strokeWidth="2"/>
+      <path d="M58 201 Q61 158 88 146 L151 146 Q181 157 185 201Z" fill="url(#${uid}-coat)" stroke="#a9bfd2" strokeWidth="2"/>
       <path d="M102 146 L119 171 L137 146 L149 201 L91 201Z" fill="#e9f2f8"/>
       <path d="M116 148 L126 148 L132 181 L120 193 L108 181Z" fill="#22c7b7"/>
       <path d="M91 151 L108 172 L98 183 L82 161Z" fill="#fff" stroke="#b8cad8" strokeWidth="2"/>
       <path d="M145 151 L131 172 L143 183 L159 161Z" fill="#fff" stroke="#b8cad8" strokeWidth="2"/>
-      <path d="M74 161 Q55 171 62 191 Q68 201 81 191 L95 176" fill="none" stroke="url(#skin)" strokeWidth="15" strokeLinecap="round"/>
-      <path d={face.arm} fill="none" stroke="url(#skin)" strokeWidth="15" strokeLinecap="round"/>
+      <path d="M74 161 Q55 171 62 191 Q68 201 81 191 L95 176" fill="none" stroke="url(#${uid}-skin)" strokeWidth="15" strokeLinecap="round"/>
+      <path d={face.arm} fill="none" stroke="url(#${uid}-skin)" strokeWidth="15" strokeLinecap="round"/>
       <path d="M159 169 L174 153 L185 161 L169 181Z" fill="#d7e5ef"/>
       <path d="M166 105 L166 84 L180 84 L180 105" fill="#e8f5f4" stroke="#159b91" strokeWidth="3"/>
-      <path d="M166 101 L180 101 L180 126 Q173 132 166 126Z" fill="url(#flask)" stroke="#159b91" strokeWidth="2"/>
+      <path d="M166 101 L180 101 L180 126 Q173 132 166 126Z" fill="url(#${uid}-flask)" stroke="#159b91" strokeWidth="2"/>
       <path d="M169 113 Q173 108 177 113" fill="none" stroke="#eafffb" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M80 76 Q76 29 119 25 Q163 24 166 74 L159 94 L86 94Z" fill="url(#hair)"/>
-      <ellipse cx="120" cy="88" rx="42" ry="48" fill="url(#skin)"/>
-      <path d="M78 78 Q80 34 119 34 Q154 33 162 69 Q143 59 127 57 Q105 69 78 78Z" fill="url(#hair)"/>
+      <path d="M80 76 Q76 29 119 25 Q163 24 166 74 L159 94 L86 94Z" fill="url(#${uid}-hair)"/>
+      <ellipse cx="120" cy="88" rx="42" ry="48" fill="url(#${uid}-skin)"/>
+      <path d="M78 78 Q80 34 119 34 Q154 33 162 69 Q143 59 127 57 Q105 69 78 78Z" fill="url(#${uid}-hair)"/>
       <path d="M83 66 Q70 82 79 103 Q65 90 70 68 Q75 42 101 32 Q91 48 83 66Z" fill="#202b3a"/>
       <path d={face.brow} fill="none" stroke="#44291f" strokeWidth="3" strokeLinecap="round"/>
       <path d="M141 78 Q148 73 154 78" fill="none" stroke="#44291f" strokeWidth="3" strokeLinecap="round"/>
