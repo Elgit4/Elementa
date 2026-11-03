@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, useRef } from 'react';
-import { Atom, BookOpen, FlaskConical, Grid3x3, House, Moon, Sun } from 'lucide-react';
+import { BookOpen, BookOpenCheck, FlaskConical, Grid3x3, House, Moon, Sun } from 'lucide-react';
 import { useRoute } from './router';
 import { ProgressProvider, useProgress } from './state/ProgressContext';
 import { Home } from './screens/Home';
@@ -7,24 +7,26 @@ const Explore = lazy(() => import('./screens/Explore').then((m) => ({ default: m
 const AtomExplorer = lazy(() => import('./screens/AtomExplorer').then((m) => ({ default: m.AtomExplorer })));
 const Learn = lazy(() => import('./screens/Learn').then((m) => ({ default: m.Learn })));
 const Lab = lazy(() => import('./screens/Lab').then((m) => ({ default: m.Lab })));
+const Practice = lazy(() => import('./screens/Practice').then((m) => ({ default: m.Practice })));
 import { OfflineStatus } from './components/OfflineStatus';
 import { PageLoader } from './components/Loading';
 
 const NAV = [
   { id: '', label: 'Home', Icon: House },
-  { id: 'explore', label: 'Explore', Icon: Grid3x3 },
-  { id: 'atom', label: 'Atom', Icon: Atom },
   { id: 'learn', label: 'Learn', Icon: BookOpen },
+  { id: 'explore', label: 'Explore', Icon: Grid3x3 },
+  { id: 'practice', label: 'Practice', Icon: BookOpenCheck },
   { id: 'lab', label: 'Lab', Icon: FlaskConical },
 ] as const;
 
-const TITLES: Record<string, string> = { '': 'Home', explore: 'Periodic table', atom: 'Atomic explorer', learn: 'Learn and practise', lab: 'Virtual lab' };
+const TITLES: Record<string, string> = { '': 'Home', explore: 'Explore', atom: 'Atomic explorer', learn: 'Learn', practice: 'Practice', lab: 'Virtual lab' };
 
 function Shell() {
   const route = useRoute();
   const { progress, update, storageWarning } = useProgress();
   const mainRef = useRef<HTMLElement>(null);
   const section = route.segments[0] ?? '';
+  const activeSection = section === 'lab' && route.segments[1] === 'practise' ? 'practice' : section;
   const first = useRef(true);
 
   useEffect(() => {
@@ -40,6 +42,7 @@ function Shell() {
     case 'atom': screen = <AtomExplorer route={route} />; break;
     case 'learn': screen = <Learn route={route} />; break;
     case 'lab': screen = <Lab route={route} />; break;
+    case 'practice': screen = <Practice />; break;
     default: screen = (<><h1>Page not found</h1><p className="muted">That page does not exist.</p><p><a className="btn" href="#/">Go home</a></p></>);
   }
   const dark = progress.theme === 'dark';
@@ -51,7 +54,7 @@ function Shell() {
         <a className="brand" href="#/" aria-label="Elementa home"><img src="/brand-mark.png" alt="" /></a>
         <nav className="nav" aria-label="Main">
           {NAV.map(({ id, label, Icon }) => (
-            <a key={id} href={`#/${id}`} aria-current={section === id ? 'page' : undefined}>
+            <a key={id} href={`#/${id}`} aria-current={activeSection === id ? 'page' : undefined}>
               <Icon size={22} aria-hidden="true" />
               <span>{label}</span>
             </a>
