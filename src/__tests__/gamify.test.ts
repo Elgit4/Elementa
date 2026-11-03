@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { LESSONS } from '../data/lessons';
-import { BONDING_QUIZ_ID } from '../engine/bondingQuiz';
-import { TRENDS_QUIZ_ID } from '../engine/trendsQuiz';
+import { BONDING_QUIZ_ID, TRENDS_QUIZ_ID } from '../engine/quizIds';
 import { activeToday, badges, levelInfo, levelStart, quests, streak, totalXp } from '../engine/gamify';
 import { emptyProgress, recordAttempt, recordDaily, completeLesson, type Progress } from '../engine/progress';
 
