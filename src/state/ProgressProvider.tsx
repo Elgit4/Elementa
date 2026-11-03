@@ -1,18 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { emptyProgress, type Progress } from '../engine/progress';
 import { IdbProgressStore, MemoryProgressStore, type ProgressStore } from '../storage/store';
+import { ProgressCtx } from './ProgressContext';
 
-interface Ctx {
-  progress: Progress;
-  ready: boolean;
-  /** Set when progress cannot be saved on this device; shown to the student. */
-  storageWarning: string | null;
-  update: (fn: (p: Progress) => Progress) => void;
-}
-
-const ProgressCtx = createContext<Ctx | null>(null);
-
-export const STORAGE_WARNING =
+const STORAGE_WARNING =
   'Your progress cannot be saved on this device right now because browser storage is unavailable. It will be lost when you close this page.';
 
 export function ProgressProvider({ children, store: injected }: { children: ReactNode; store?: ProgressStore }) {
@@ -78,10 +69,4 @@ export function ProgressProvider({ children, store: injected }: { children: Reac
 
   const value = useMemo(() => ({ progress, ready, storageWarning: warning, update }), [progress, ready, warning, update]);
   return <ProgressCtx.Provider value={value}>{children}</ProgressCtx.Provider>;
-}
-
-export function useProgress(): Ctx {
-  const c = useContext(ProgressCtx);
-  if (!c) throw new Error('useProgress must be used inside ProgressProvider');
-  return c;
 }

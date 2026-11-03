@@ -1,0 +1,72 @@
+/* Section-level formative checks */
+.knowledge-check {
+  margin: 22px 0 8px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.knowledge-check > .eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--accent-ink);
+  font-size: .72rem;
+  font-weight: 750;
+  letter-spacing: .08em;
+}
+.knowledge-check-field { min-width: 0; margin: 0; padding: 0; border: 0; }
+.knowledge-check-field legend {
+  width: 100%;
+  margin-bottom: 12px;
+  color: var(--text);
+  font-size: 1.04rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+.knowledge-check-options { display: grid; gap: 8px; }
+.knowledge-check-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+  line-height: 1.4;
+}
+.knowledge-check-option:has(input:focus-visible) {
+  outline: 3px solid color-mix(in oklab, var(--focus) 45%, transparent);
+  outline-offset: 2px;
+}
+.knowledge-check-option input { flex: none; width: 17px; height: 17px; accent-color: var(--accent-ink); }
+.knowledge-check-option > span:first-of-type { flex: 1; min-width: 0; }
+.knowledge-check-option[data-state='right'] {
+  border-color: var(--good);
+  background: var(--good-bg);
+}
+.knowledge-check-option[data-state='wrong'] {
+  border-color: var(--bad);
+  background: var(--bad-bg);
+}
+.knowledge-check-mark { display: inline-flex; flex: none; align-items: center; gap: 4px; font-size: .78rem; font-weight: 700; }
+.knowledge-check-option[data-state='right'] .knowledge-check-mark { color: var(--good); }
+.knowledge-check-option[data-state='wrong'] .knowledge-check-mark { color: var(--bad); }
+.knowledge-check-feedback {
+  display: grid;
+  gap: 5px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-left: 4px solid var(--border);
+  border-radius: 4px 10px 10px 4px;
+}
+.knowledge-check-feedback p { margin: 0; line-height: 1.55; }
+.knowledge-check-feedback.good { border-left-color: var(--good); background: var(--good-bg); }
+.knowledge-check-feedback.bad { border-left-color: var(--bad); background: var(--bad-bg); }
+.knowledge-check-submit { margin-top: 12px; }
+.knowledge-check-submit:disabled { opacity: .55; cursor: not-allowed; }
+@media (max-width: 520px) {
+  .knowledge-check { padding: 14px; }
+  .knowledge-check-option { align-items: flex-start; }
+}

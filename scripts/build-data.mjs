@@ -97,4 +97,5 @@ const out = raw.map((e) => {
   };
 });
 writeFileSync(new URL('../src/data/elements.json', import.meta.url), JSON.stringify(out));
-console.log('wrote', out.length, 'elements');
+writeFileSync(new URL('../src/data/element-labels.json', import.meta.url), JSON.stringify(out.map(({ number, symbol, name }) => ({ number, symbol, name }))));
+console.log('wrote', out.length, 'elements and compact labels');

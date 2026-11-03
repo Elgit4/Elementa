@@ -193,3 +193,25 @@ main:focus { outline: none; }
   color: var(--accent-ink);
   font-weight: 650;
 }
+
+
+/* The first offline-ready confirmation is a toast, not a new row in the page flow. */
+.offline-ready-toast {
+  position: fixed;
+  z-index: 70;
+  right: 20px;
+  bottom: 20px;
+  width: min(460px, calc(100vw - 40px));
+  margin: 0;
+  border-color: color-mix(in oklab, var(--good) 38%, var(--border));
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+}
+.offline-ready-toast > svg { flex: none; color: var(--good); }
+.offline-ready-toast > span { flex: 1 1 220px; }
+@media (max-width: 760px) {
+  .offline-ready-toast {
+    right: 12px;
+    bottom: calc(var(--tabbar) + 12px);
+    width: calc(100vw - 24px);
+  }
+}

@@ -3,8 +3,7 @@ import { toSubscript } from './atom';
 import { IONIC_METALS, IONIC_NONMETALS, MOLECULES, analyseMolecule, displayFormula, ionSymbol, ionicCompound } from './bonding';
 import { seededShuffle, type Choice, type Question } from './quiz';
 
-/** Progress id for attempts at the bonding practice quiz. */
-export const BONDING_QUIZ_ID = 'bonding';
+export { BONDING_QUIZ_ID } from './quizIds';
 export const BONDING_QUIZ_LENGTH = 10;
 
 const IDS = ['a', 'b', 'c', 'd'];

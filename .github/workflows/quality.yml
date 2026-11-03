@@ -1,0 +1,83 @@
+name: Quality checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, "feat/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Build, test, lint and mobile audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Audit dependency vulnerabilities
+        run: npm run audit
+      - name: Type-check and build
+        run: npm run build
+      - name: Run tests
+        run: npm test
+      - name: Run lint
+        run: npm run lint
+      - name: Install browser test and Lighthouse tools
+        run: npm install --no-save --package-lock=false playwright@1.64.1 lighthouse@13.6.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run browser smoke tests
+        run: node scripts/browser-smoke.mjs
+      - name: Run Lighthouse mobile-profile audits
+        run: |
+          mkdir -p artifacts/lighthouse
+          node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4173 --strictPort > /tmp/elementa-lighthouse-preview.log 2>&1 &
+          PREVIEW_PID=$!
+          trap 'kill "$PREVIEW_PID" 2>/dev/null || true' EXIT
+
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then
+              break
+            fi
+            if [ "$attempt" -eq 60 ]; then
+              cat /tmp/elementa-lighthouse-preview.log
+              echo "Vite production preview did not become ready."
+              exit 1
+            fi
+            sleep 0.5
+          done
+
+          export CHROME_PATH="$(node --input-type=module -e 'import { chromium } from "playwright"; process.stdout.write(chromium.executablePath());')"
+
+          for run in 1 2 3; do
+            echo "Running Lighthouse mobile profile: $run/3"
+            ./node_modules/.bin/lighthouse 'http://127.0.0.1:4173/#/' \
+              --form-factor=mobile \
+              --throttling-method=simulate \
+              --output=html --output=json \
+              --output-path="artifacts/lighthouse/mobile-$run" \
+              --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+              --quiet
+          done
+
+          node scripts/summarize-lighthouse.mjs \
+            artifacts/lighthouse/mobile-1.report.json \
+            artifacts/lighthouse/mobile-2.report.json \
+            artifacts/lighthouse/mobile-3.report.json
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: elementa-lighthouse-mobile
+          path: artifacts/lighthouse/
+          if-no-files-found: ignore
+          retention-days: 30

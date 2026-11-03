@@ -1,15 +1,14 @@
 import { useMemo, useState } from 'react';
 import { ArrowRight, Atom, BookOpen, Check, Clock3, FlaskConical, Flame, Medal, Scale, TrendingUp, Zap } from 'lucide-react';
 import { LESSONS } from '../data/lessons';
-import { getElement } from '../data';
+import { getElementLabel } from '../data/element-labels';
 import { bestScore, dayKey, mastery, recordDaily } from '../engine/progress';
 import { dailyQuestion } from '../engine/daily';
 import { evaluate } from '../engine/quiz';
-import { BONDING_QUIZ_ID } from '../engine/bondingQuiz';
-import { TRENDS_QUIZ_ID } from '../engine/trendsQuiz';
+import { BONDING_QUIZ_ID, TRENDS_QUIZ_ID } from '../engine/quizIds';
 import { badges, levelInfo, quests, streak, totalXp } from '../engine/gamify';
 import { PageSkeleton, Skeleton } from '../components/Loading';
-import { useProgress } from '../state/ProgressContext';
+import { useProgress } from '../state/useProgress';
 import { ChemistryMascot } from '../components/ChemistryMascot';
 import { AchievementArt } from '../components/AchievementArt';
 
@@ -92,7 +91,7 @@ export function Home() {
   const lesson = LESSONS[0];
   const pos = progress.lessonPosition[lesson.id];
   const done = progress.completedLessons.includes(lesson.id);
-  const recent = progress.recentElements.map(getElement).filter(Boolean);
+  const recent = progress.recentElements.map(getElementLabel).filter(Boolean);
   const xp = totalXp(progress);
   const lv = levelInfo(xp);
   const days = streak(progress, today);
@@ -180,17 +179,17 @@ export function Home() {
               <h2 id="prac-title">Build your chemistry skills</h2>
               <p>Choose a short activity and put what you know into practice.</p>
             </div>
-            <a href="#/lab" className="section-link">Open lab <ArrowRight size={15} aria-hidden="true" /></a>
+            <a href="#/practice" className="section-link">Open practice <ArrowRight size={15} aria-hidden="true" /></a>
           </div>
           <div className="practice-grid">
-            <a className="tile-card" href="#/lab/practise">
+            <a className="tile-card" href="#/practice">
               <span className="ico"><FlaskConical size={21} aria-hidden="true" /></span>
               <span className="practice-card-label">BONDING</span>
               <h3>Bonding challenge</h3>
               <p>Test your understanding of ionic and covalent bonds.</p>
               <span className="tile-foot"><span>{scoreText(bondBest)}</span><ArrowRight size={16} aria-hidden="true" /></span>
             </a>
-            <a className="tile-card" href="#/lab/practise/trends">
+            <a className="tile-card" href="#/practice">
               <span className="ico trends-ico"><TrendingUp size={21} aria-hidden="true" /></span>
               <span className="practice-card-label">PERIODIC TABLE</span>
               <h3>Periodic trends</h3>

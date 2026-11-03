@@ -140,6 +140,14 @@ describe('progress', () => {
     expect(P.mastery(p, 'q')).toBe(88);
     expect(P.bestScore(p, 'none')).toBeNull();
   });
+  it('keeps the furthest lesson section and avoids redundant progress writes', () => {
+    const initial = P.emptyProgress();
+    const first = P.setLessonPosition(initial, 'atoms', 2);
+    expect(first.lessonPosition.atoms).toBe(2);
+    expect(P.setLessonPosition(first, 'atoms', 1)).toBe(first);
+    expect(P.setLessonPosition(first, 'atoms', 2)).toBe(first);
+    expect(P.setLessonPosition(first, 'atoms', 4).lessonPosition.atoms).toBe(4);
+  });
   it('migrates garbage and old shapes safely', () => {
     expect(P.migrate(null)).toEqual(P.emptyProgress());
     expect(P.migrate({ completedLessons: 'x', attempts: 5 }).completedLessons).toEqual([]);

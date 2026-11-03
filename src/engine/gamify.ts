@@ -1,6 +1,5 @@
 import { LESSONS } from '../data/lessons';
-import { BONDING_QUIZ_ID } from './bondingQuiz';
-import { TRENDS_QUIZ_ID } from './trendsQuiz';
+import { BONDING_QUIZ_ID, TRENDS_QUIZ_ID } from './quizIds';
 import { bestScore, dayKey, type Progress } from './progress';
 
 /**

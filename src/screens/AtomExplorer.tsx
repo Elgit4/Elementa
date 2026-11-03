@@ -7,7 +7,7 @@ import { isoelectronicNobleGas } from '../engine/display';
 import { AtomDiagram } from '../components/AtomDiagram';
 import { go, type Route } from '../router';
 import { viewElement } from '../engine/progress';
-import { useProgress } from '../state/ProgressContext';
+import { useProgress } from '../state/useProgress';
 
 function nav(z: number, iso?: number, q?: number) {
   const params = new URLSearchParams();
@@ -19,15 +19,27 @@ function nav(z: number, iso?: number, q?: number) {
 
 export function AtomExplorer({ route }: { route: Route }) {
   const { update } = useProgress();
-  const z = Number(route.segments[1] ?? 6);
-  const el = getElement(Number.isInteger(z) ? z : 6) ?? getElement(6)!;
+  const z = route.segments[1] === undefined ? 6 : Number(route.segments[1]);
+  const selectedElement = Number.isInteger(z) && z >= 1 && z <= 118 ? getElement(z) : undefined;
+  const invalidElement = !selectedElement;
+  const el = selectedElement ?? getElement(6)!;
   const charges = useMemo(() => ionCharges(el), [el]);
   const isoParam = Number(route.query.get('iso'));
   const iso = getIsotope(el, isoParam) ?? getIsotope(el, el.defaultIsotope)!;
   const qParam = Number(route.query.get('q') ?? 0);
   const charge = charges.includes(qParam) ? qParam : 0;
 
-  useEffect(() => { update((p) => viewElement(p, el.number)); }, [el.number, update]);
+  useEffect(() => { if (!invalidElement) update((p) => viewElement(p, el.number)); }, [el.number, invalidElement, update]);
+
+  if (invalidElement) {
+    return (
+      <>
+        <PageHeader Icon={AtomIcon} eyebrow="Explore" title="Element not found" subtitle="Choose an element from the periodic table to inspect its atomic structure." />
+        <p className="muted">Atomic numbers must be whole numbers from 1 to 118.</p>
+        <a className="btn primary" href="#/explore">Return to the periodic table</a>
+      </>
+    );
+  }
 
   const p = particles(el.number, iso.mass, charge);
   const shells = ionShells(el.shells, charge) ?? el.shells;

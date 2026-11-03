@@ -1,9 +1,9 @@
-import { ELEMENTS } from '../data';
+import { ELEMENT_LABELS } from '../data/element-labels';
 import type { Question } from './quiz';
 import { seededShuffle } from './quiz';
 
 /** Elements used for the daily challenge: the first 30, which are the most common in early courses. */
-const POOL = ELEMENTS.slice(0, 30);
+const POOL = ELEMENT_LABELS.slice(0, 30);
 
 export function hashString(s: string): number {
   let h = 2166136261;

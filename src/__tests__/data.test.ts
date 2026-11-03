@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ELEMENTS, getElement } from '../data';
+import { ELEMENT_LABELS, getElementLabel } from '../data/element-labels';
+import { dailyQuestion } from '../engine/daily';
 import { filingException, parseConfig, totalElectrons } from '../engine/config';
 
 describe('element data integrity', () => {
@@ -71,6 +73,29 @@ describe('element data integrity', () => {
       expect(e.period, e.symbol).toBeLessThanOrEqual(7);
       expect(['s', 'p', 'd', 'f'], e.symbol).toContain(e.block);
       expect(e.family).not.toBe('unknown');
+    }
+  });
+});
+
+describe('lightweight element labels and daily challenge', () => {
+  it('keeps every compact label identical to the canonical element dataset', () => {
+    expect(ELEMENT_LABELS).toHaveLength(ELEMENTS.length);
+    expect(ELEMENT_LABELS).toEqual(ELEMENTS.map(({ number, symbol, name }) => ({ number, symbol, name })));
+    for (const element of ELEMENTS) expect(getElementLabel(element.number)).toEqual({
+      number: element.number, symbol: element.symbol, name: element.name,
+    });
+    expect(getElementLabel(0)).toBeUndefined();
+    expect(getElementLabel(119)).toBeUndefined();
+  });
+
+  it('generates valid daily questions using the same first 30 canonical elements', () => {
+    for (const date of ['2026-01-01', '2026-06-15', '2026-11-03', '2027-12-31']) {
+      const question = dailyQuestion(date);
+      expect(question.id).toBe(`daily-${date}`);
+      expect(question.choices).toHaveLength(4);
+      expect(question.choices.some((choice) => choice.id === question.correct)).toBe(true);
+      expect(question.explanation.length).toBeGreaterThan(0);
+      expect(question.choices.every((choice) => choice.text.length > 0)).toBe(true);
     }
   });
 });
