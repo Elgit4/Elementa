@@ -20,7 +20,9 @@ function nav(z: number, iso?: number, q?: number) {
 export function AtomExplorer({ route }: { route: Route }) {
   const { update } = useProgress();
   const z = route.segments[1] === undefined ? 6 : Number(route.segments[1]);
-  const el = Number.isInteger(z) && z >= 1 && z <= 118 ? getElement(z) : undefined;
+  const selectedElement = Number.isInteger(z) && z >= 1 && z <= 118 ? getElement(z) : undefined;
+  const invalidElement = !selectedElement;
+  const el = selectedElement ?? getElement(6)!;
   const charges = useMemo(() => ionCharges(el), [el]);
   const isoParam = Number(route.query.get('iso'));
   const iso = getIsotope(el, isoParam) ?? getIsotope(el, el.defaultIsotope)!;
@@ -29,7 +31,7 @@ export function AtomExplorer({ route }: { route: Route }) {
 
   useEffect(() => { update((p) => viewElement(p, el.number)); }, [el.number, update]);
 
-  if (!el) {
+  if (invalidElement) {
     return (
       <>
         <PageHeader Icon={AtomIcon} eyebrow="Explore" title="Element not found" subtitle="Choose an element from the periodic table to inspect its atomic structure." />
