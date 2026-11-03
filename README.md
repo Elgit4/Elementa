@@ -13,8 +13,9 @@ npm install
 npm run dev        # development
 npm run build      # type-check + production build (also generates the service worker)
 npm run preview    # serve the production build (needed to test offline/PWA)
-npm test           # 101 unit tests
-npm run lint       # oxlint (2 known warnings, see below)
+npm test           # Vitest unit tests
+npm run lint       # Oxlint, scoped to application source
+npm run audit      # full and production-only npm dependency audit
 npm run data       # regenerate src/data/elements.json from periodic-table-data-complete (MIT)
 ```
 
@@ -24,16 +25,18 @@ npm run data       # regenerate src/data/elements.json from periodic-table-data-
 |---|---|
 | Explore | Interactive periodic table, search, element detail, "Colour tiles by" overlays for atomic radius, first ionisation energy and electronegativity (rank-based colours, values printed on tiles), plus trend summaries. |
 | Atom | Bohr-style diagram: protons, neutrons per isotope, electrons, ion charge |
-| Learn | Lesson on atoms, isotopes and ions with a quiz |
+| Learn | Course/topic/lesson structure; an atomic-structure lesson with a formative check in every section and a final quiz |
+| Practice | Dedicated hub for the lesson assessment, bonding practice and periodic-trends practice |
 | Virtual lab | Hub of activities with deep links (`#/lab/ionic`, `/covalent`, `/reactions`, `/practise`, `/practise/trends`): Ionic bonding (dot-and-cross), covalent molecules, 7 reactions with a balancing challenge, and practice quizzes on bonding and periodic trends |
 | Home | Game layer: level and XP ring, daily streak, today's quests, badges, daily challenge, practice tiles with best scores, recent elements. All derived from stored progress (`src/engine/gamify.ts`) |
-| Offline | Installable PWA; all screens, quizzes and progress work without internet |
+| Offline | Installable PWA; all screens, quizzes and progress work without internet after the app shell has been cached |
 
 ## How correctness is protected
 
 - Element data comes from one dataset, never typed by hand. Unknown values are `null` and shown as "no value", never guessed.
 - Everything shown in the lab is computed by pure engines (`src/engine/*`) and tested against independent hand-written oracles: ionic formulas and charges, molecule electron counts, atom totals for isotopes, and trend logic.
 - Trend quizzes only ask questions where the data agrees with the general trend, so an answer never contradicts its explanation. Documented exceptions (B < Be, Al < Mg, O < N, S < P) are shown in the explanations.
+- Lesson question IDs, correct choices and misconception feedback are checked by tests.
 - Reaction observations and safety notes are static text and are the least machine-checked part: they are intended as educational notes rather than a substitute for formal lab guidance.
 
 ## Loading and structure
@@ -44,22 +47,24 @@ npm run data       # regenerate src/data/elements.json from periodic-table-data-
 ## Layout
 
 ```
-src/data       element dataset + lessons
+src/data       element dataset + lessons + curriculum
 src/engine     pure logic (atoms, config, trends, bonding, reactions, quizzes, progress)
 src/components reusable UI      src/screens  routes (hash routing)
-src/storage    IndexedDB       src/state    progress context
+src/storage    IndexedDB       src/state    progress context, provider and hook
 ```
 
-## Tested
+## Automated verification
 
-- Unit tests (vitest): 101 passing.
-- Browser (Playwright, Chromium only): every screen and Lab tab in dark and light themes at 1440px and 375px with axe-core (WCAG 2 A/AA + best practice): 0 violations; all three trend overlays in both themes and sizes: 0 violations; no horizontal scroll at 375px in the Lab.
-- Offline (Chromium): after one online visit, hard loads of every screen, Reactions, trends quiz and progress saving work with the network off; update prompt flow checked.
+The latest GitHub Actions run for this branch executes dependency auditing, TypeScript type-checking, a production build, Vitest and Oxlint. The current suite has **108 unit tests** across 10 test files. Oxlint is scoped to `src/` and currently reports zero warnings and zero errors.
 
-## Not yet tested or done
+The full dependency audit currently identifies 10 low/moderate findings in the development/build dependency tree. The audit also reports production dependencies separately; see the current workflow run for the exact counts. No high or critical findings were reported in the full audit.
 
-- Real devices: low-end Android, iOS Safari, install prompt, persistent-storage grant. Only Chromium was used.
-- Lighthouse audit (would not launch in the build environment).
-- Screen-reader testing with real assistive tech (axe only catches a subset).
-- Usability pilot with students; deployment/hosting; analytics. (Stage 6.)
-- Known lint warnings: `Learn.tsx` set-state-in-effect, `ProgressContext.tsx` only-export-components.
+## Not yet verified
+
+- A maintained Playwright/browser end-to-end suite is not present in this branch, so there is no current automated claim for screen rendering, keyboard flows or visual regressions.
+- Real devices: low-end Android, iOS Safari, install prompt, persistent-storage grant.
+- Offline/PWA install and update behavior on real browsers.
+- Lighthouse performance/accessibility audit.
+- Screen-reader testing with real assistive technology.
+- Usability pilot with students; deployment/hosting; analytics.
+- The published atomic-structure lesson remains draft content awaiting chemistry teacher review.
