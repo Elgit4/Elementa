@@ -52,7 +52,9 @@ export function viewElement(p: Progress, n: number, max = 8): Progress {
 
 export function setLessonPosition(p: Progress, lessonId: string, index: number): Progress {
   const prev = p.lessonPosition[lessonId] ?? 0;
-  return { ...p, lessonPosition: { ...p.lessonPosition, [lessonId]: Math.max(prev, index) } };
+  const next = Math.max(prev, index);
+  if (p.lessonPosition[lessonId] === next) return p;
+  return { ...p, lessonPosition: { ...p.lessonPosition, [lessonId]: next } };
 }
 
 export function completeLesson(p: Progress, lessonId: string): Progress {
