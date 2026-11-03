@@ -19,8 +19,17 @@ function nav(z: number, iso?: number, q?: number) {
 
 export function AtomExplorer({ route }: { route: Route }) {
   const { update } = useProgress();
-  const z = Number(route.segments[1] ?? 6);
-  const el = getElement(Number.isInteger(z) ? z : 6) ?? getElement(6)!;
+  const z = route.segments[1] === undefined ? 6 : Number(route.segments[1]);
+  const el = Number.isInteger(z) && z >= 1 && z <= 118 ? getElement(z) : undefined;
+  if (!el) {
+    return (
+      <>
+        <PageHeader Icon={AtomIcon} eyebrow="Explore" title="Element not found" subtitle="Choose an element from the periodic table to inspect its atomic structure." />
+        <p className="muted">Atomic numbers must be whole numbers from 1 to 118.</p>
+        <a className="btn primary" href="#/explore">Return to the periodic table</a>
+      </>
+    );
+  }
   const charges = useMemo(() => ionCharges(el), [el]);
   const isoParam = Number(route.query.get('iso'));
   const iso = getIsotope(el, isoParam) ?? getIsotope(el, el.defaultIsotope)!;
