@@ -57,7 +57,7 @@ export function OfflineStatus() {
         </div>
       )}
       {offlineReady && !readyDismissed && (
-        <div className="banner" role="status">
+        <div className="banner offline-ready-toast" role="status">
           <CircleCheck size={18} aria-hidden="true" />
           <span>Elementa is saved on this device and works without internet.</span>
           <button className="btn" onClick={() => setReadyDismissed(true)}>OK</button>
