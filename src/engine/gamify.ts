@@ -13,6 +13,7 @@ export const ATTEMPT_BASE_XP = 5;
 export const CORRECT_XP = 2;
 export const DAILY_XP = 15;
 export const DAILY_CORRECT_BONUS_XP = 10;
+export const DAILY_REWARD_XP = DAILY_XP + DAILY_CORRECT_BONUS_XP;
 
 export function totalXp(p: Progress): number {
   const lessons = p.completedLessons.length * LESSON_XP;
@@ -93,7 +94,7 @@ export function quests(p: Progress, today: Date): Quest[] {
   const attemptToday = p.attempts.some((a) => { const d = new Date(a.at); return !Number.isNaN(d.getTime()) && dayKey(d) === key; });
   const lesson = LESSONS[0];
   return [
-    { id: 'daily', title: 'Answer the daily challenge', detail: `+${DAILY_XP} XP`, href: '#/', done: p.daily[key]?.correct === true },
+    { id: 'daily', title: 'Answer the daily challenge', detail: `+${DAILY_REWARD_XP} XP`, href: '#/', done: p.daily[key]?.correct === true },
     { id: 'practise', title: 'Finish a practice quiz', detail: `+${ATTEMPT_BASE_XP} XP and ${CORRECT_XP} XP per correct answer`, href: '#/lab', done: attemptToday },
     lesson
       ? { id: 'lesson', title: p.completedLessons.includes(lesson.id) ? 'Revise a lesson' : 'Complete your first lesson', detail: p.completedLessons.includes(lesson.id) ? 'Lesson already completed' : `+${LESSON_XP} XP`, href: `#/learn/${lesson.id}`, done: p.completedLessons.includes(lesson.id) }
