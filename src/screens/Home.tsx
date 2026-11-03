@@ -6,7 +6,7 @@ import { bestScore, dayKey, mastery, recordDaily } from '../engine/progress';
 import { dailyQuestion } from '../engine/daily';
 import { evaluate } from '../engine/quiz';
 import { BONDING_QUIZ_ID, TRENDS_QUIZ_ID } from '../engine/quizIds';
-import { badges, DAILY_XP, levelInfo, quests, streak, totalXp } from '../engine/gamify';
+import { badges, DAILY_REWARD_XP, levelInfo, quests, streak, totalXp } from '../engine/gamify';
 import { PageSkeleton, Skeleton } from '../components/Loading';
 import { useProgress } from '../state/useProgress';
 import { ChemistryMascot } from '../components/ChemistryMascot';
@@ -55,7 +55,7 @@ function DailyChallenge({ onClose }: { onClose: () => void }) {
       <section className="daily-challenge card daily-challenge-panel">
         <div className="challenge-heading">
           <div>
-            <span className="eyebrow">DAILY TASK · +{DAILY_XP} XP</span>
+            <span className="eyebrow">DAILY TASK · +{DAILY_REWARD_XP} XP</span>
             <h2 id="daily-modal-title">Daily chemistry challenge</h2>
             <p className="daily-challenge-intro">Answer correctly to complete today’s task.</p>
           </div>
@@ -80,7 +80,7 @@ function DailyChallenge({ onClose }: { onClose: () => void }) {
         <div className="challenge-feedback" aria-live="polite">
           {ev && <p className={`feedback ${ev.correct ? 'good' : 'bad'}`}>
             <b>{ev.correct ? 'Correct.' : 'Not quite.'}</b> {ev.feedback.wrongNote} {ev.feedback.explanation}
-            {ev.correct && <strong> +{DAILY_XP} XP added. This task is complete.</strong>}
+            {ev.correct && <strong> +{DAILY_REWARD_XP} XP added. This task is complete.</strong>}
           </p>}
           {!ev && completed && <p className="muted small">You have already completed today’s challenge.</p>}
         </div>
