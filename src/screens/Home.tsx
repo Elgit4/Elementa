@@ -1,12 +1,11 @@
 import { useMemo, useState } from 'react';
 import { ArrowRight, Atom, BookOpen, Check, Clock3, FlaskConical, Flame, Medal, Scale, TrendingUp, Zap } from 'lucide-react';
 import { LESSONS } from '../data/lessons';
-import { getElement } from '../data';
+import { getElementLabel } from '../data/element-labels';
 import { bestScore, dayKey, mastery, recordDaily } from '../engine/progress';
 import { dailyQuestion } from '../engine/daily';
 import { evaluate } from '../engine/quiz';
-import { BONDING_QUIZ_ID } from '../engine/bondingQuiz';
-import { TRENDS_QUIZ_ID } from '../engine/trendsQuiz';
+import { BONDING_QUIZ_ID, TRENDS_QUIZ_ID } from '../engine/quizIds';
 import { badges, levelInfo, quests, streak, totalXp } from '../engine/gamify';
 import { PageSkeleton, Skeleton } from '../components/Loading';
 import { useProgress } from '../state/useProgress';
@@ -92,7 +91,7 @@ export function Home() {
   const lesson = LESSONS[0];
   const pos = progress.lessonPosition[lesson.id];
   const done = progress.completedLessons.includes(lesson.id);
-  const recent = progress.recentElements.map(getElement).filter(Boolean);
+  const recent = progress.recentElements.map(getElementLabel).filter(Boolean);
   const xp = totalXp(progress);
   const lv = levelInfo(xp);
   const days = streak(progress, today);
