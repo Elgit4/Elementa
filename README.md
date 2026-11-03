@@ -16,7 +16,7 @@ npm run preview    # serve the production build (needed to test offline/PWA)
 npm test           # Vitest unit tests
 npm run lint       # Oxlint, scoped to application source
 npm run audit      # full and production-only npm dependency audit
-npm run data       # regenerate src/data/elements.json from periodic-table-data-complete (MIT)
+npm run data       # regenerate elements.json and compact element-labels.json from the MIT dataset
 ```
 
 ## What is in it
@@ -47,7 +47,7 @@ npm run data       # regenerate src/data/elements.json from periodic-table-data-
 ## Layout
 
 ```
-src/data       element dataset + lessons + curriculum
+src/data       element dataset + compact labels + lessons + curriculum
 src/engine     pure logic (atoms, config, trends, bonding, reactions, quizzes, progress)
 src/components reusable UI      src/screens  routes (hash routing)
 src/storage    IndexedDB       src/state    progress context, provider and hook
@@ -55,13 +55,15 @@ src/storage    IndexedDB       src/state    progress context, provider and hook
 
 ## Automated verification
 
-The latest GitHub Actions run for this branch executes dependency auditing, TypeScript type-checking, a production build, Vitest and Oxlint. The current suite has **108 unit tests** across 10 test files. Oxlint is scoped to `src/` and currently reports zero warnings and zero errors.
+The latest GitHub Actions run for this branch executes dependency auditing, TypeScript type-checking, a production build, Vitest and Oxlint. The current suite has **110 unit tests** across 10 test files. Oxlint is scoped to `src/` and currently reports zero warnings and zero errors.
 
-The full dependency audit currently identifies 10 low/moderate findings in the development/build dependency tree. The audit also reports production dependencies separately; see the current workflow run for the exact counts. No high or critical findings were reported in the full audit.
+The full dependency audit currently reports **4 low-severity dependency-path findings**, all tracing to the same `deepmerge@4.3.1` advisory in the development/build dependency tree. There are **0 moderate, high or critical findings**, and the production-only audit reports **0 vulnerabilities**. The advisory has no published patched version, so the dependency was retained rather than forcing a breaking downgrade. The affected dependency is part of the build tooling and is not included in the production bundle. See [the GitHub advisory](https://github.com/advisories/GHSA-gcqx-w48m-w2h4) for its scope and status.
 
 ## Browser smoke coverage
 
 GitHub Actions runs a Playwright Chromium smoke suite against the production preview. It checks primary navigation; course and lesson rendering; formative-check reset between lesson sections; saved lesson position after reload; a 375px mobile viewport without page-level horizontal overflow; theme switching; periodic-table search and element details; isotope selection in the Atomic Explorer; completion and result display in the ionic activity; molecule selection in the covalent activity; reaction-answer reveal; bonding and periodic-trends quiz routes; and the Practice and Lab hubs.
+
+The initial JavaScript chunk is now **285.50 kB minified (90.06 kB gzip)**, down from 581.42 kB (120.03 kB gzip). The full element dataset and quiz-generation modules are no longer pulled into the initial Home screen bundle. No generated JavaScript chunk now exceeds Vite's 500 kB warning threshold.
 
 These are targeted interaction smoke tests, not a full accessibility or visual-regression suite.
 
