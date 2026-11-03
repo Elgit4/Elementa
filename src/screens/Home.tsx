@@ -128,7 +128,8 @@ function HomeSkeleton() {
 
 export function Home() {
   const [dailyOpen, setDailyOpen] = useState(false);
-  const closeDailyChallenge = useCallback(() => setDailyOpen(false), []);\n  const { progress, ready } = useProgress();
+  const closeDailyChallenge = useCallback(() => setDailyOpen(false), []);
+  const { progress, ready } = useProgress();
   const [today] = useState(() => new Date());
   const lesson = LESSONS[0];
   const pos = progress.lessonPosition[lesson.id];
