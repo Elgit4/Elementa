@@ -65,10 +65,11 @@ export function Reactions() {
   const [id, setId] = useState(REACTIONS[0].id);
   const r = REACTIONS.find((x) => x.id === id)!;
   return (
-    <section aria-labelledby="react-h">
+    <section aria-labelledby="react-h" className="lab-experiment lab-experiment-reactions">
+      <div className="lab-experiment-kicker"><span>03 / 03 · GUIDED SIMULATION</span><span className="lab-concept-tag">CONSERVATION OF ATOMS</span></div>
       <h2 id="react-h">Reactions: what happens to the atoms</h2>
       <p className="muted">Choose a reaction to see the balanced equation, what you would observe, and why it happens. Then try balancing it yourself.</p>
-      <div className="chips" role="group" aria-label="Choose a reaction">
+      <div className="chips reaction-picker" role="group" aria-label="Choose a reaction">
         {REACTIONS.map((x) => <button key={x.id} className="chip" aria-pressed={id === x.id} onClick={() => setId(x.id)}>{x.title}</button>)}
       </div>
       <div className="react-grid" key={r.id}>
