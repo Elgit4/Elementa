@@ -2,6 +2,7 @@ import { useMemo, useRef, useState, useEffect, type ReactNode } from 'react';
 import { Check, X } from 'lucide-react';
 import type { Question } from '../engine/quiz';
 import { evaluate, score, seededShuffle, type Evaluation } from '../engine/quiz';
+import { ChemistryMascot } from './ChemistryMascot';
 
 interface Props {
   questions: Question[];
@@ -28,7 +29,7 @@ export function Quiz({ questions, seed, onFinish, finishLabel = 'Finish', result
     const s = score(answers);
     return (
       <section className="quiz-result card" aria-labelledby="qr-title">
-        <h2 id="qr-title" ref={headRef} tabIndex={-1}>You scored {s.correct} out of {s.total}</h2>
+        <div className="quiz-result-hero"><ChemistryMascot mood={s.percent >= 80 ? "cheer" : s.percent >= 50 ? "think" : "focus"} size={112} /><div><span className="eyebrow">{s.percent >= 80 ? "EXCELLENT PROGRESS" : s.percent >= 50 ? "KEEP BUILDING" : "A CHANCE TO LEARN"}</span><h2 id="qr-title" ref={headRef} tabIndex={-1}>You scored {s.correct} out of {s.total}</h2><strong className="quiz-result-percent">{s.percent}%</strong></div></div>
         <p className="muted">{s.percent >= 80 ? 'Strong work. You can move on, or revisit the lesson to keep it fresh.' : s.percent >= 50 ? 'A good start. Read the explanations below, then try again.' : 'This topic needs another look. Read the lesson again, then retry the quiz.'}</p>
         {missed.length > 0 && (
           <div className="missed">
@@ -97,8 +98,9 @@ export function Quiz({ questions, seed, onFinish, finishLabel = 'Finish', result
       <div aria-live="polite">
         {result && (
           <div className={`feedback ${result.correct ? 'good' : 'bad'}`}>
-            <p><b>{result.correct ? 'Correct.' : 'Not quite.'}</b> {result.feedback.wrongNote}</p>
-            <p>{result.feedback.explanation}</p>
+            <ChemistryMascot mood={result.correct ? "cheer" : "think"} size={76} className="feedback-mascot" />
+            <div className="feedback-copy"><p><b>{result.correct ? 'Correct.' : 'Not quite.'}</b> {result.feedback.wrongNote}</p>
+            <p>{result.feedback.explanation}</p></div>
           </div>
         )}
       </div>
