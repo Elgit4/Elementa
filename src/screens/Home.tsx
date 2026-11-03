@@ -1,52 +1,93 @@
-import { useMemo, useState } from 'react';
-import { ArrowRight, Atom, BookOpen, Check, Clock3, FlaskConical, Flame, Medal, Scale, TrendingUp, Zap } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowRight, Atom, BookOpen, Check, Clock3, FlaskConical, Flame, Medal, Scale, TrendingUp, X, Zap } from 'lucide-react';
 import { LESSONS } from '../data/lessons';
 import { getElementLabel } from '../data/element-labels';
 import { bestScore, dayKey, mastery, recordDaily } from '../engine/progress';
 import { dailyQuestion } from '../engine/daily';
 import { evaluate } from '../engine/quiz';
 import { BONDING_QUIZ_ID, TRENDS_QUIZ_ID } from '../engine/quizIds';
-import { badges, levelInfo, quests, streak, totalXp } from '../engine/gamify';
+import { badges, DAILY_XP, levelInfo, quests, streak, totalXp } from '../engine/gamify';
 import { PageSkeleton, Skeleton } from '../components/Loading';
 import { useProgress } from '../state/useProgress';
 import { ChemistryMascot } from '../components/ChemistryMascot';
 import { AchievementArt } from '../components/AchievementArt';
 
-function DailyChallenge() {
+function DailyChallenge({ onClose }: { onClose: () => void }) {
   const { progress, update } = useProgress();
   const [key] = useState(() => dayKey(new Date()));
   const q = useMemo(() => dailyQuestion(key), [key]);
-  const done = progress.daily[key];
+  const completed = progress.daily[key]?.correct === true;
   const [picked, setPicked] = useState<string | null>(null);
   const ev = picked ? evaluate(q, picked) : null;
-  const answered = done !== undefined || ev !== null;
+  const solved = completed || ev?.correct === true;
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (!dialog.open) dialog.showModal();
+    return () => {
+      if (dialog.open) dialog.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!ev?.correct) return;
+    const timeout = window.setTimeout(onClose, 1100);
+    return () => window.clearTimeout(timeout);
+  }, [ev?.correct, onClose]);
+
+  const chooseAnswer = (choiceId: string) => {
+    if (solved) return;
+    const result = evaluate(q, choiceId);
+    setPicked(choiceId);
+    if (result.correct) update((p) => recordDaily(p, key, true));
+  };
 
   return (
-    <section className="daily-challenge card" aria-labelledby="daily-title">
-      <div className="challenge-heading">
-        <div>
-          <span className="eyebrow">A QUICK DAILY WIN</span>
-          <h2 id="daily-title">Daily chemistry challenge</h2>
+    <dialog
+      ref={dialogRef}
+      className="daily-challenge-dialog"
+      aria-labelledby="daily-modal-title"
+      onCancel={(event) => { event.preventDefault(); onClose(); }}
+      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
+    >
+      <section className="daily-challenge card daily-challenge-panel">
+        <div className="challenge-heading">
+          <div>
+            <span className="eyebrow">DAILY TASK · +{DAILY_XP} XP</span>
+            <h2 id="daily-modal-title">Daily chemistry challenge</h2>
+            <p className="daily-challenge-intro">Answer correctly to complete today’s task.</p>
+          </div>
+          <button className="daily-challenge-close" type="button" onClick={onClose} aria-label="Close daily challenge">
+            <X size={19} aria-hidden="true" />
+          </button>
+          <ChemistryMascot mood="think" size={76} className="challenge-mascot" />
         </div>
-        <ChemistryMascot mood="think" size={82} className="challenge-mascot" />
-      </div>
-      <p id="daily-q" className="daily-q">{q.stem}</p>
-      <div className="chips challenge-choices" role="group" aria-labelledby="daily-q">
-        {q.choices.map((c) => (
-          <button
-            key={c.id}
-            className="chip"
-            disabled={answered}
-            data-state={answered && c.id === q.correct ? 'right' : picked === c.id && !ev?.correct ? 'wrong' : undefined}
-            onClick={() => { setPicked(c.id); const r = evaluate(q, c.id); update((p) => recordDaily(p, key, r.correct)); }}
-          >{c.text}{answered && c.id === q.correct ? ' (correct)' : ''}</button>
-        ))}
-      </div>
-      <div className="challenge-feedback" aria-live="polite">
-        {ev && <p className={`feedback ${ev.correct ? 'good' : 'bad'}`}><b>{ev.correct ? 'Correct.' : 'Not quite.'}</b> {ev.feedback.wrongNote} {ev.feedback.explanation}</p>}
-        {!ev && done && <p className="muted small">You answered today’s challenge{done.correct ? ' correctly' : ''}. A new one arrives tomorrow.</p>}
-      </div>
-    </section>
+        <p id="daily-q" className="daily-q">{q.stem}</p>
+        <div className="chips challenge-choices" role="group" aria-labelledby="daily-q">
+          {q.choices.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              className="chip"
+              disabled={solved}
+              data-state={ev?.correct && c.id === q.correct ? 'right' : picked === c.id && ev && !ev.correct ? 'wrong' : undefined}
+              onClick={() => chooseAnswer(c.id)}
+            >{c.text}{ev?.correct && c.id === q.correct ? ' (correct)' : ''}</button>
+          ))}
+        </div>
+        <div className="challenge-feedback" aria-live="polite">
+          {ev && <p className={`feedback ${ev.correct ? 'good' : 'bad'}`}>
+            <b>{ev.correct ? 'Correct.' : 'Not quite.'}</b> {ev.feedback.wrongNote} {ev.feedback.explanation}
+            {ev.correct && <strong> +{DAILY_XP} XP added. This task is complete.</strong>}
+          </p>}
+          {!ev && completed && <p className="muted small">You have already completed today’s challenge.</p>}
+        </div>
+        {!ev?.correct && <p className="daily-challenge-hint">You can try another answer. The task is only completed when your answer is correct.</p>}
+        {ev?.correct && <p className="daily-challenge-hint daily-challenge-success">Closing your completed task…</p>}
+      </section>
+    </dialog>
   );
 }
 
@@ -86,7 +127,7 @@ function HomeSkeleton() {
 }
 
 export function Home() {
-  const { progress, ready } = useProgress();
+  const [dailyOpen, setDailyOpen] = useState(false);\n  const closeDailyChallenge = useCallback(() => setDailyOpen(false), []);\n  const { progress, ready } = useProgress();
   const [today] = useState(() => new Date());
   const lesson = LESSONS[0];
   const pos = progress.lessonPosition[lesson.id];
@@ -220,19 +261,30 @@ export function Home() {
           <ul className="quest-list">
             {todayQuests.map((q) => (
               <li key={q.id}>
-                <a className="quest" data-done={q.done} href={q.id === 'daily' ? '#/' : q.href} onClick={q.id === 'daily' ? (e) => { e.preventDefault(); document.getElementById('daily-title')?.scrollIntoView({ block: 'center' }); } : undefined}>
-                  <span className="tick" aria-hidden="true"><Check size={15} /></span>
-                  <span className="quest-copy"><b>{q.title}</b><small>{q.done ? 'Completed today' : q.detail}</small></span>
-                  <ArrowRight className="quest-arrow" size={15} aria-hidden="true" />
-                </a>
+                {q.id === 'daily' ? (
+                  <button
+                    className="quest"
+                    type="button"
+                    data-done={q.done}
+                    disabled={q.done}
+                    aria-haspopup="dialog"
+                    onClick={() => setDailyOpen(true)}
+                  >
+                    <span className="tick" aria-hidden="true"><Check size={15} /></span>
+                    <span className="quest-copy"><b>{q.title}</b><small>{q.done ? 'Completed today' : q.detail}</small></span>
+                    {!q.done && <ArrowRight className="quest-arrow" size={15} aria-hidden="true" />}
+                  </button>
+                ) : (
+                  <a className="quest" data-done={q.done} href={q.href}>
+                    <span className="tick" aria-hidden="true"><Check size={15} /></span>
+                    <span className="quest-copy"><b>{q.title}</b><small>{q.done ? 'Completed today' : q.detail}</small></span>
+                    <ArrowRight className="quest-arrow" size={15} aria-hidden="true" />
+                  </a>
+                )}
               </li>
             ))}
           </ul>
         </section>
-
-        <div className="home-daily">
-          <DailyChallenge />
-        </div>
 
         <details className="home-achievements card">
           <summary>
@@ -267,6 +319,7 @@ export function Home() {
           <a className="recent-atom-link" href="#/atom/6?iso=14"><Atom size={16} aria-hidden="true" /> Compare carbon-12 and carbon-14 <ArrowRight size={14} aria-hidden="true" /></a>
         </section>
       </div>
+      {dailyOpen && <DailyChallenge onClose={closeDailyChallenge} />}
     </div>
   );
 }
