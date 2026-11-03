@@ -180,17 +180,17 @@ export function Home() {
               <h2 id="prac-title">Build your chemistry skills</h2>
               <p>Choose a short activity and put what you know into practice.</p>
             </div>
-            <a href="#/lab" className="section-link">Open lab <ArrowRight size={15} aria-hidden="true" /></a>
+            <a href="#/practice" className="section-link">Open practice <ArrowRight size={15} aria-hidden="true" /></a>
           </div>
           <div className="practice-grid">
-            <a className="tile-card" href="#/lab/practise">
+            <a className="tile-card" href="#/practice">
               <span className="ico"><FlaskConical size={21} aria-hidden="true" /></span>
               <span className="practice-card-label">BONDING</span>
               <h3>Bonding challenge</h3>
               <p>Test your understanding of ionic and covalent bonds.</p>
               <span className="tile-foot"><span>{scoreText(bondBest)}</span><ArrowRight size={16} aria-hidden="true" /></span>
             </a>
-            <a className="tile-card" href="#/lab/practise/trends">
+            <a className="tile-card" href="#/practice">
               <span className="ico trends-ico"><TrendingUp size={21} aria-hidden="true" /></span>
               <span className="practice-card-label">PERIODIC TABLE</span>
               <h3>Periodic trends</h3>
