@@ -2,8 +2,7 @@ import { ArrowRight, Atom, BookOpenCheck, FlaskConical, TrendingUp } from 'lucid
 import { PageHeader } from '../components/PageHeader';
 import { Spinner } from '../components/Loading';
 import { bestScore } from '../engine/progress';
-import { BONDING_QUIZ_ID } from '../engine/bondingQuiz';
-import { TRENDS_QUIZ_ID } from '../engine/trendsQuiz';
+import { BONDING_QUIZ_ID, TRENDS_QUIZ_ID } from '../engine/quizIds';
 import { useProgress } from '../state/useProgress';
 
 const ACTIVITIES = [
