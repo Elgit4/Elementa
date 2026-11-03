@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LESSONS } from '../data/lessons';
+import { LESSONS, QUESTIONS } from '../data/lessons';
 import { evaluate } from '../engine/quiz';
 
 describe('lesson knowledge checks', () => {
@@ -15,7 +15,7 @@ describe('lesson knowledge checks', () => {
   });
 
   it('uses unique identifiers across formative and end-of-lesson questions', () => {
-    const ids = checks.map(({ question }) => question.id);
+    const ids = [...checks.map(({ question }) => question.id), ...QUESTIONS.map((question) => question.id)];
     expect(new Set(ids).size).toBe(ids.length);
   });
 
