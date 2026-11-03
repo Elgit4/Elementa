@@ -125,6 +125,29 @@ try {
   await page.locator('.lab-result').waitFor();
   assert.match(await page.locator('.lab-result').innerText(), /magnesium chloride/i);
 
+  // Covalent molecule selector updates the displayed molecule and electron table.
+  await page.goto(`${origin}/#/lab/covalent`, { waitUntil: 'networkidle' });
+  await page.getByRole('heading', { name: 'Covalent bonding: sharing electrons' }).waitFor();
+  const moleculePicker = page.getByRole('group', { name: 'Choose a molecule' });
+  assert.equal(await moleculePicker.getByRole('button').count(), 9, 'Covalent explorer should offer nine molecules');
+  await moleculePicker.getByRole('button').last().click();
+  await page.locator('.lab-grid h3').getByText('Carbon dioxide').waitFor();
+
+  // Reactions balancing interface should reveal its equation and atom-count feedback.
+  await page.goto(`${origin}/#/lab/reactions`, { waitUntil: 'networkidle' });
+  await page.getByRole('heading', { name: 'Reactions: what happens to the atoms' }).waitFor();
+  await page.getByRole('button', { name: 'Show the answer' }).click();
+  await page.getByText('Balanced equation:', { exact: false }).waitFor();
+
+  // The bonding quiz accepts an answer and shows explanatory feedback.
+  await page.goto(`${origin}/#/lab/practise`, { waitUntil: 'networkidle' });
+  await page.getByRole('heading', { name: 'Practise: bonding' }).waitFor();
+  await page.getByRole('radio').first().click();
+  await page.getByRole('button', { name: 'Check answer' }).click();
+  await page.locator('.feedback').first().waitFor();
+  await page.goto(`${origin}/#/lab/practise/trends`, { waitUntil: 'networkidle' });
+  await page.getByRole('heading', { name: 'Practise: periodic trends' }).waitFor();
+
   // Dedicated Practice and Lab destinations should be reachable on mobile.
   await page.locator('.nav a[href="#/practice"]').click();
   await page.getByRole('heading', { name: 'Practice', exact: true }).waitFor();
