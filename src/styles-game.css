@@ -389,3 +389,55 @@
   .section-link, .home-practice .tile-card { transition: none; }
 }
 
+
+
+/* Elementa character illustration system */
+.chem-mascot { display: block; max-width: 100%; height: auto; overflow: visible; }
+.home-hero {
+  grid-template-columns: minmax(0, 1fr) 174px minmax(270px, 330px);
+}
+.home-hero-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  min-width: 0;
+  isolation: isolate;
+}
+.home-hero-art::before {
+  content: '';
+  position: absolute;
+  width: 142px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--accent) 13%, var(--surface-2));
+  z-index: -1;
+}
+.home-hero-art .chem-mascot { position: relative; z-index: 1; filter: drop-shadow(0 10px 10px color-mix(in oklab, #020617 16%, transparent)); }
+.mascot-orbit {
+  position: absolute;
+  border: 1px solid color-mix(in oklab, var(--accent) 28%, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.orbit-one { width: 164px; height: 164px; transform: rotate(-24deg) scaleY(.58); }
+.orbit-two { width: 190px; height: 190px; transform: rotate(35deg) scaleY(.55); opacity: .55; }
+.challenge-heading { align-items: center; }
+.challenge-mascot { flex: none; margin: -14px -7px -12px 0; filter: drop-shadow(0 5px 5px color-mix(in oklab, #020617 15%, transparent)); }
+
+@media (max-width: 1050px) {
+  .home-hero { grid-template-columns: minmax(0, 1fr) 145px; }
+  .home-hero-art { grid-column: 2; grid-row: 1; }
+  .home-level { grid-column: 1 / -1; }
+}
+@media (max-width: 560px) {
+  .home-hero { grid-template-columns: minmax(0, 1fr) 112px; align-items: center; }
+  .home-hero-copy { grid-column: 1; grid-row: 1; }
+  .home-hero-art { grid-column: 2; grid-row: 1; align-self: center; }
+  .home-hero-art .chem-mascot { width: 126px !important; max-width: none; }
+  .home-hero-art::before { width: 94px; }
+  .orbit-one { width: 112px; height: 112px; }
+  .orbit-two { width: 130px; height: 130px; }
+  .home-level { grid-column: 1 / -1; }
+  .challenge-mascot { width: 70px !important; }
+}
