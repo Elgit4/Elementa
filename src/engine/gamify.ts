@@ -45,7 +45,7 @@ export function levelInfo(xp: number): LevelInfo {
 }
 
 function activeDays(p: Progress): Set<string> {
-  const days = new Set(Object.keys(p.daily));
+  const days = new Set(Object.entries(p.daily).filter(([, result]) => result.correct).map(([key]) => key));
   for (const a of p.attempts) { const d = new Date(a.at); if (!Number.isNaN(d.getTime())) days.add(dayKey(d)); }
   return days;
 }
@@ -53,7 +53,7 @@ function activeDays(p: Progress): Set<string> {
 const addDays = (d: Date, n: number) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() + n); return x; };
 
 /**
- * Consecutive days with any activity (a daily challenge or a quiz attempt), counted back from today.
+ * Consecutive days with a completed daily challenge or a quiz attempt, counted back from today.
  * If today has no activity yet the streak is still alive as long as yesterday had some, so a student
  * is not shown a zero before they have had the chance to study today.
  */
@@ -79,7 +79,7 @@ export function badges(p: Progress, today: Date): Badge[] {
     { id: 'bonding', title: 'Bond maker', how: 'Score 80% or more in the bonding practice.', earned: best(BONDING_QUIZ_ID) >= 80 },
     { id: 'trends', title: 'Trend spotter', how: 'Score 80% or more in the periodic trends practice.', earned: best(TRENDS_QUIZ_ID) >= 80 },
     { id: 'all-rounder', title: 'All-rounder', how: 'Try the lesson quiz, bonding practice and trends practice.', earned: tried(lessonQuiz) && tried(BONDING_QUIZ_ID) && tried(TRENDS_QUIZ_ID) },
-    { id: 'daily-3', title: 'Daily habit', how: 'Answer 3 daily challenges.', earned: Object.keys(p.daily).length >= 3 },
+    { id: 'daily-3', title: 'Daily habit', how: 'Answer 3 daily challenges.', earned: Object.values(p.daily).filter((result) => result.correct).length >= 3 },
     { id: 'streak-3', title: 'Three-day streak', how: 'Study 3 days in a row.', earned: streak(p, today) >= 3 },
     { id: 'explorer', title: 'Explorer', how: 'Open 5 different elements.', earned: new Set(p.recentElements).size >= 5 },
   ];
@@ -93,7 +93,7 @@ export function quests(p: Progress, today: Date): Quest[] {
   const attemptToday = p.attempts.some((a) => { const d = new Date(a.at); return !Number.isNaN(d.getTime()) && dayKey(d) === key; });
   const lesson = LESSONS[0];
   return [
-    { id: 'daily', title: 'Answer the daily challenge', detail: `+${DAILY_XP} XP`, href: '#/', done: p.daily[key] !== undefined },
+    { id: 'daily', title: 'Answer the daily challenge', detail: `+${DAILY_XP} XP`, href: '#/', done: p.daily[key]?.correct === true },
     { id: 'practise', title: 'Finish a practice quiz', detail: `+${ATTEMPT_BASE_XP} XP and ${CORRECT_XP} XP per correct answer`, href: '#/lab', done: attemptToday },
     lesson
       ? { id: 'lesson', title: p.completedLessons.includes(lesson.id) ? 'Revise a lesson' : 'Complete your first lesson', detail: p.completedLessons.includes(lesson.id) ? 'Lesson already completed' : `+${LESSON_XP} XP`, href: `#/learn/${lesson.id}`, done: p.completedLessons.includes(lesson.id) }
