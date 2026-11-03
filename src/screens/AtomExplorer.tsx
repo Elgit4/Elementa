@@ -29,7 +29,7 @@ export function AtomExplorer({ route }: { route: Route }) {
   const qParam = Number(route.query.get('q') ?? 0);
   const charge = charges.includes(qParam) ? qParam : 0;
 
-  useEffect(() => { update((p) => viewElement(p, el.number)); }, [el.number, update]);
+  useEffect(() => { if (!invalidElement) update((p) => viewElement(p, el.number)); }, [el.number, invalidElement, update]);
 
   if (invalidElement) {
     return (
