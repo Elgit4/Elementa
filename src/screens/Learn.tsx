@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ArrowRight, BookOpen, Check, GraduationCap } from 'lucide-react';
 import { Breadcrumbs, PageHeader } from '../components/PageHeader';
 import { Spinner } from '../components/Loading';
+import { KnowledgeCheck } from '../components/KnowledgeCheck';
 import { LESSONS, QUESTIONS } from '../data/lessons';
 import { CURRICULUM } from '../data/curriculum';
 import { bestScore, completeLesson, mastery, recordAttempt, setLessonPosition } from '../engine/progress';
@@ -139,6 +140,7 @@ function LessonReader({ lessonId }: { lessonId: string }) {
           </p>
         )}
       </article>
+      <KnowledgeCheck question={s.check} />
       <div className="row between">
         <button className="btn" onClick={() => setStep(step - 1)} disabled={step === 0}>Back</button>
         {last
