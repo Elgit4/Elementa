@@ -10,6 +10,7 @@ import { Spinner } from '../components/Loading';
 import { PageHeader, Breadcrumbs } from '../components/PageHeader';
 import { go, type Route } from '../router';
 import { Reactions } from '../components/Reactions';
+import { REACTIONS } from '../engine/reactions';
 import { useProgress } from '../state/useProgress';
 import { bestScore, mastery, recordAttempt } from '../engine/progress';
 import { BONDING_QUIZ_ID, BONDING_QUIZ_LENGTH, bondingQuestions } from '../engine/bondingQuiz';
@@ -41,7 +42,8 @@ function Ionic() {
       </div>
       <div className="lab-grid">
         <DotCross r={r} stage={step as Stage} />
-        <div>
+        <div className="lab-step-content">
+          <div className="lab-stage-marker"><span>MODEL STAGE {step + 1} / {steps.length}</span><strong>{steps[step].title}</strong></div>
           <progress className="bar" value={step + 1} max={steps.length} aria-label={`Step ${step + 1} of ${steps.length}`} />
           <p className="small muted">Step {step + 1} of {steps.length}</p>
           <ol className="lab-steps">
@@ -80,7 +82,7 @@ function Covalent() {
       </div>
       <div className="lab-grid">
         <MoleculeDiagram def={def} description={description} />
-        <div>
+        <div className="molecule-detail">
           <h3>{def.name} <span className="sci">{displayFormula(def.formula)}</span></h3>
           <ul>{a.bondLabels.map((l, i) => <li key={i}>{l}</li>)}</ul>
           <p className="small muted">A line is one shared pair of electrons. A pair of dots is a lone pair: both electrons belong to one atom and are not shared. This drawing shows which atoms are bonded, not the true 3D shape of the molecule.</p>
@@ -182,7 +184,7 @@ export function Lab({ route }: { route: Route }) {
           <div className="lab-intro-facts" aria-label="Laboratory activities">
             <div><strong>03</strong><span>guided simulations</span></div>
             <div><strong>{String(MOLECULES.length).padStart(2, '0')}</strong><span>molecules to explore</span></div>
-            <div><strong>07</strong><span>reaction examples</span></div>
+            <div><strong>{REACTIONS.length}</strong><span>reaction examples</span></div>
           </div>
           <div className="lab-intro-mark" aria-hidden="true"><FlaskConical size={58} strokeWidth={1.25} /></div>
         </section>
