@@ -7,7 +7,7 @@ import { LESSONS, QUESTIONS } from '../data/lessons';
 import { CURRICULUM } from '../data/curriculum';
 import { bestScore, completeLesson, mastery, recordAttempt, setLessonPosition } from '../engine/progress';
 import { Quiz } from '../components/Quiz';
-import { useProgress } from '../state/ProgressContext';
+import { useProgress } from '../state/useProgress';
 import { go, type Route } from '../router';
 
 export function Learn({ route }: { route: Route }) {
