@@ -114,7 +114,14 @@ try {
   await page.getByLabel('Metal', { exact: true }).selectOption('12');
   await page.getByRole('button', { name: 'Next step' }).click();
   await page.getByRole('heading', { name: 'Electrons are transferred' }).waitFor();
-  await page.getByRole('button', { name: 'Next step' }).click();
+  // Advance according to the activity's actual step count; result appears only on the final step.
+  let ionicSteps = 0;
+  while (await page.getByRole('button', { name: 'Next step' }).count()) {
+    await page.getByRole('button', { name: 'Next step' }).click();
+    ionicSteps += 1;
+    assert.ok(ionicSteps <= 8, 'Ionic activity should have a finite, short sequence');
+  }
+  await page.getByRole('button', { name: 'Start again' }).waitFor();
   await page.locator('.lab-result').waitFor();
   assert.match(await page.locator('.lab-result').innerText(), /magnesium chloride/i);
 
