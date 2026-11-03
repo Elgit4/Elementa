@@ -22,6 +22,7 @@ export function ProgressProvider({ children, store: injected }: { children: Reac
   const storeRef = useRef<ProgressStore | null>(null);
   const latest = useRef(progress);
   const queue = useRef<Promise<void>>(Promise.resolve());
+  const pendingUpdates = useRef<Array<(p: Progress) => Progress>>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -37,9 +38,17 @@ export function ProgressProvider({ children, store: injected }: { children: Reac
       }
       if (cancelled) return;
       storeRef.current = store;
-      latest.current = loaded;
-      setProgress(loaded);
+      // Rebase interactions made while IndexedDB was opening onto the stored state.
+      // This prevents early route effects (for example, viewing an element) being lost
+      // when the initial load resolves.
+      const pending = pendingUpdates.current.splice(0);
+      const hydrated = pending.reduce((current, apply) => apply(current), loaded);
+      latest.current = hydrated;
+      setProgress(hydrated);
       setReady(true);
+      if (hydrated !== loaded) {
+        queue.current = queue.current.then(() => store.save(hydrated)).catch(() => setWarning(STORAGE_WARNING));
+      }
     })();
     return () => { cancelled = true; };
   }, [injected]);
@@ -50,12 +59,20 @@ export function ProgressProvider({ children, store: injected }: { children: Reac
   }, [progress.theme]);
 
   const update = useCallback((fn: (p: Progress) => Progress) => {
+    const store = storeRef.current;
+    if (!store) {
+      pendingUpdates.current.push(fn);
+      const optimistic = fn(latest.current);
+      if (optimistic !== latest.current) {
+        latest.current = optimistic;
+        setProgress(optimistic);
+      }
+      return;
+    }
     const next = fn(latest.current);
     if (next === latest.current) return;
     latest.current = next;
     setProgress(next);
-    const store = storeRef.current;
-    if (!store) return;
     queue.current = queue.current.then(() => store.save(next)).catch(() => setWarning(STORAGE_WARNING));
   }, []);
 
