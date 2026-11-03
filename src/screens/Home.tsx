@@ -10,6 +10,7 @@ import { TRENDS_QUIZ_ID } from '../engine/trendsQuiz';
 import { badges, levelInfo, quests, streak, totalXp } from '../engine/gamify';
 import { PageSkeleton, Skeleton } from '../components/Loading';
 import { useProgress } from '../state/ProgressContext';
+import { ChemistryMascot } from '../components/ChemistryMascot';
 
 function DailyChallenge() {
   const { progress, update } = useProgress();
@@ -27,7 +28,7 @@ function DailyChallenge() {
           <span className="eyebrow">A QUICK DAILY WIN</span>
           <h2 id="daily-title">Daily chemistry challenge</h2>
         </div>
-        <span className="challenge-mark" aria-hidden="true"><Zap size={18} /></span>
+        <ChemistryMascot mood="think" size={82} className="challenge-mascot" />
       </div>
       <p id="daily-q" className="daily-q">{q.stem}</p>
       <div className="chips challenge-choices" role="group" aria-labelledby="daily-q">
@@ -117,6 +118,11 @@ export function Home() {
           <p>{first
             ? 'Explore the elements, understand what happens inside atoms, and build confidence through practice.'
             : `${lv.toNext} XP to reach level ${lv.level + 1}. Keep your momentum with one focused study session.`}</p>
+        </div>
+        <div className="home-hero-art" aria-hidden="true">
+          <ChemistryMascot mood={first ? 'curious' : 'cheer'} size={174} />
+          <span className="mascot-orbit orbit-one" />
+          <span className="mascot-orbit orbit-two" />
         </div>
         <div className="home-level">
           <LevelRing level={lv.level} fraction={lv.fraction} />
