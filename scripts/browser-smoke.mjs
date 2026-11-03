@@ -105,8 +105,8 @@ try {
   }));
   assert.equal(characterStatus.complete, true, 'The Home character illustration should finish loading');
   assert.ok(characterStatus.naturalWidth > 0, 'The Home character illustration should have intrinsic dimensions');
-  assert.match(characterStatus.source, /^\/illustrations\/open-peeps\//,
-    'The Home character should use a locally hosted Open Peeps asset');
+  assert.equal(characterStatus.source, '/illustrations/open-peeps/peep-66.svg',
+    'The Home character should use the checked arms-crossed, non-weapon illustration');
 
   // Daily goal opens a modal, can be dismissed, and completes only after a correct answer.
   const dailyTask = page.locator('.home-quests button.quest');
