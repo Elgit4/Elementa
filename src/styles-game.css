@@ -529,3 +529,81 @@
   .home-achievements .badge { min-height: 128px; padding: 12px 8px; }
   .home-achievements .badge small { font-size: .72rem; }
 }
+
+
+/* Learning flow: practice hub and connected exploration entry points */
+.practice-hub {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.practice-hub-card {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 21px;
+  border-radius: 16px;
+  text-decoration: none;
+}
+.practice-hub-card h2 { margin-top: 15px; font-size: 1.08rem; }
+.practice-hub-card p { flex: 1; margin-top: 7px; color: var(--muted); font-size: .88rem; line-height: 1.55; }
+.practice-hub-card .tile-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: .78rem;
+}
+.practice-hub-action { display: inline-flex; align-items: center; gap: 5px; color: var(--accent-ink); font-weight: 700; }
+.practice-guidance {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-top: 20px;
+  padding: 20px;
+}
+.practice-guidance-icon {
+  display: grid;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--accent-ink);
+  background: color-mix(in oklab, var(--accent) 13%, var(--surface-2));
+}
+.practice-guidance h2 { font-size: 1rem; }
+.practice-guidance p { margin: 5px 0 12px; max-width: 68ch; font-size: .86rem; line-height: 1.5; }
+.practice-guidance .row { flex-wrap: wrap; gap: 8px; }
+.explore-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: -7px 0 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+.explore-tools strong { font-size: .9rem; }
+.explore-tools p { margin-top: 3px; }
+.explore-tools .btn { flex: none; }
+@media (max-width: 900px) {
+  .practice-hub { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .practice-hub { grid-template-columns: minmax(0, 1fr); gap: 11px; }
+  .practice-hub-card { min-height: 185px; padding: 17px; }
+  .practice-guidance { padding: 16px; gap: 11px; }
+  .practice-guidance .row .btn { width: 100%; }
+  .explore-tools { align-items: stretch; flex-direction: column; }
+  .explore-tools .btn { width: 100%; }
+}
