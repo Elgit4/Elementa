@@ -51,6 +51,36 @@ async function waitForStoredSection(page, expectedSection) {
 try {
   await waitForServer();
   browser = await chromium.launch({ headless: true });
+
+  // Verify that first-run offline readiness cannot push the mobile Home screen down.
+  const layoutContext = await browser.newContext({ viewport: { width: 412, height: 915 } });
+  const layoutPage = await layoutContext.newPage();
+  await layoutPage.addInitScript(() => {
+    window.__elementaCLS = 0;
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (!entry.hadRecentInput) window.__elementaCLS += entry.value;
+      }
+    }).observe({ type: 'layout-shift', buffered: true });
+  });
+  await layoutPage.goto(`${origin}/#/`, { waitUntil: 'networkidle' });
+  await layoutPage.getByRole('heading', { name: 'Make chemistry click.' }).waitFor();
+  await layoutPage.locator('.offline-ready-toast').waitFor({ state: 'visible', timeout: 10_000 });
+  assert.equal(
+    await layoutPage.locator('.offline-ready-toast').evaluate((element) => getComputedStyle(element).position),
+    'fixed',
+    'Offline-ready confirmation must not participate in document flow',
+  );
+  const firstRunLayout = await layoutPage.evaluate(() => ({
+    cls: window.__elementaCLS,
+    statusStackHeight: document.querySelector('.status-stack')?.getBoundingClientRect().height ?? 0,
+  }));
+  assert.ok(firstRunLayout.statusStackHeight < 1,
+    `Offline-ready toast should leave the status stack out of flow; height was ${firstRunLayout.statusStackHeight}px`);
+  assert.ok(firstRunLayout.cls < 0.01,
+    `First-run mobile Home should remain visually stable; observed CLS was ${firstRunLayout.cls.toFixed(4)}`);
+  await layoutContext.close();
+
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();
   page.on('pageerror', (error) => failures.push(error.message));
@@ -157,7 +187,7 @@ try {
   await page.getByRole('heading', { name: 'Virtual lab', exact: true }).waitFor();
 
   assert.deepEqual(failures, [], 'The browser must not raise uncaught page errors');
-  console.log('Browser smoke tests passed: learning flow, saved progress, mobile layout, theme, Explore, Atomic Explorer, ionic/covalent activities, reaction balancing, both quiz routes, Practice and Lab hubs.');
+  console.log('Browser smoke tests passed: first-run mobile CLS, offline status, learning flow, saved progress, mobile layout, theme, Explore, Atomic Explorer, ionic/covalent activities, reaction balancing, both quiz routes, Practice and Lab hubs.');
 } finally {
   if (browser) await browser.close();
   server.kill('SIGTERM');
