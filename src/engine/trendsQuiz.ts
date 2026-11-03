@@ -3,8 +3,7 @@ import type { ElementData } from '../data/types';
 import { seededShuffle, type Choice, type Question } from './quiz';
 import { TREND_BY_ID, trendValue, withUnit, type Trend, type TrendId } from './trends';
 
-/** Progress id for attempts at the periodic-trends practice quiz. */
-export const TRENDS_QUIZ_ID = 'trends';
+export { TRENDS_QUIZ_ID } from './quizIds';
 export const TRENDS_QUIZ_LENGTH = 10;
 
 const IDS = ['a', 'b', 'c', 'd'];
