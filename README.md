@@ -55,7 +55,7 @@ src/storage    IndexedDB       src/state    progress context, provider and hook
 
 ## Automated verification
 
-The latest GitHub Actions run for this branch executes dependency auditing, TypeScript type-checking, a production build, Vitest and Oxlint. The current suite has **110 unit tests** across 10 test files. Oxlint is scoped to `src/` and currently reports zero warnings and zero errors.
+The latest GitHub Actions run for this branch executes dependency auditing, TypeScript type-checking, a production build, Vitest, Oxlint, Playwright browser smoke tests and a Lighthouse mobile-profile audit. The current unit suite has **110 tests** across 10 test files. Oxlint is scoped to `src/` and currently reports zero warnings and zero errors.
 
 The full dependency audit currently reports **4 low-severity dependency-path findings**, all tracing to the same `deepmerge@4.3.1` advisory in the development/build dependency tree. There are **0 moderate, high or critical findings**, and the production-only audit reports **0 vulnerabilities**. The advisory has no published patched version, so the dependency was retained rather than forcing a breaking downgrade. The affected dependency is part of the build tooling and is not included in the production bundle. See [the GitHub advisory](https://github.com/advisories/GHSA-gcqx-w48m-w2h4) for its scope and status.
 
@@ -63,15 +63,22 @@ The full dependency audit currently reports **4 low-severity dependency-path fin
 
 GitHub Actions runs a Playwright Chromium smoke suite against the production preview. It checks primary navigation; course and lesson rendering; formative-check reset between lesson sections; saved lesson position after reload; a 375px mobile viewport without page-level horizontal overflow; theme switching; periodic-table search and element details; isotope selection in the Atomic Explorer; completion and result display in the ionic activity; molecule selection in the covalent activity; reaction-answer reveal; bonding and periodic-trends quiz routes; and the Practice and Lab hubs.
 
-The initial JavaScript chunk is now **285.50 kB minified (90.06 kB gzip)**, down from 581.42 kB (120.03 kB gzip). The full element dataset and quiz-generation modules are no longer pulled into the initial Home screen bundle. No generated JavaScript chunk now exceeds Vite's 500 kB warning threshold.
+## Lighthouse mobile audit
 
-These are targeted interaction smoke tests, not a full accessibility or visual-regression suite.
+GitHub Actions runs Lighthouse **three times** against the built production preview using its simulated mobile form factor and throttling profile. The workflow reports the median scores for Performance, Accessibility, Best Practices and SEO, plus First Contentful Paint (FCP), Largest Contentful Paint (LCP), Total Blocking Time (TBT), Cumulative Layout Shift (CLS) and Speed Index. Each run produces HTML and JSON reports; the median summary is added to the workflow summary, and the reports are retained as a downloadable workflow artifact for 30 days.
+
+The first runs establish a baseline and are informational; no score threshold is enforced until results are stable across CI runs. These are synthetic lab measurements from an emulated browser, not measurements from a physical low-end phone or real-user field data. TBT is a lab metric and is not a substitute for field Interaction to Next Paint (INP).
+
+## Bundle performance
+
+The initial JavaScript chunk is **285.50 kB minified (90.06 kB gzip)**, down from 581.42 kB (120.03 kB gzip). The full element dataset and quiz-generation modules are no longer pulled into the initial Home screen bundle. No generated JavaScript chunk now exceeds Vite's 500 kB warning threshold.
+
+The browser and Lighthouse suites are targeted automated checks, not a full visual-regression or assistive-technology test suite.
 
 ## Not yet verified
 
 - Real-device behavior on low-end Android and iOS Safari, including the install prompt and persistent-storage grant.
 - Full PWA install, offline-first behavior and update flow on real browsers and devices.
-- Lighthouse performance and accessibility audit.
-- Screen-reader testing with real assistive technology.
+- Real-user field Core Web Vitals, including INP, and screen-reader testing with assistive technology.
 - Usability pilot with students; deployment/hosting; analytics.
 - The published atomic-structure lesson remains draft content awaiting chemistry teacher review.
