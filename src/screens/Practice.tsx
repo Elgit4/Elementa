@@ -1,5 +1,6 @@
 import { ArrowRight, Atom, BookOpenCheck, FlaskConical, TrendingUp } from 'lucide-react';
 import { PageHeader } from '../components/PageHeader';
+import { Spinner } from '../components/Loading';
 import { bestScore } from '../engine/progress';
 import { BONDING_QUIZ_ID } from '../engine/bondingQuiz';
 import { TRENDS_QUIZ_ID } from '../engine/trendsQuiz';
@@ -33,7 +34,9 @@ const ACTIVITIES = [
 ] as const;
 
 export function Practice() {
-  const { progress } = useProgress();
+  const { progress, ready } = useProgress();
+
+  if (!ready) return <p className="muted" role="status"><Spinner label="Loading your practice history" /> Loading your practice history…</p>;
 
   return (
     <>
