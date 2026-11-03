@@ -95,6 +95,29 @@ try {
   await page.getByRole('button', { name: 'Switch to light theme' }).click();
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'light');
 
+  // Explore search and the narrow-screen element detail route.
+  await page.locator('.nav a[href="#/explore"]').click();
+  await page.getByRole('heading', { name: 'Periodic table' }).waitFor();
+  await page.getByLabel('Search elements').fill('iron');
+  await page.locator('.tile[aria-label^="Iron, symbol Fe"]').click();
+  await page.getByRole('heading', { name: 'Iron', exact: true }).waitFor();
+  assert.match(await page.locator('.detail-sub').innerText(), /Atomic number 26/);
+
+  // Atomic Explorer loads isotope state from the route.
+  await page.goto(`${origin}/#/atom/6?iso=14`, { waitUntil: 'networkidle' });
+  await page.getByRole('heading', { name: 'Atomic explorer' }).waitFor();
+  assert.match(await page.locator('.atom-controls').innerText(), /carbon-14/i);
+
+  // The ionic lab updates from the selected elements and progresses through its steps.
+  await page.goto(`${origin}/#/lab/ionic`, { waitUntil: 'networkidle' });
+  await page.getByRole('heading', { name: 'Ionic bonding: electron transfer' }).waitFor();
+  await page.getByLabel('Metal').selectOption('12');
+  await page.getByRole('button', { name: 'Next step' }).click();
+  await page.getByRole('heading', { name: 'Electrons are transferred' }).waitFor();
+  await page.getByRole('button', { name: 'Next step' }).click();
+  await page.locator('.lab-result').waitFor();
+  assert.match(await page.locator('.lab-result').innerText(), /magnesium chloride/i);
+
   // Dedicated Practice and Lab destinations should be reachable on mobile.
   await page.locator('.nav a[href="#/practice"]').click();
   await page.getByRole('heading', { name: 'Practice', exact: true }).waitFor();
