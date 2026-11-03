@@ -14,7 +14,7 @@ import { ElementList } from '../components/ElementList';
 import { ElementDetail } from '../components/ElementDetail';
 import { ChemistryMascot } from '../components/ChemistryMascot';
 import { go, useMedia, type Route } from '../router';
-import { useProgress } from '../state/ProgressContext';
+import { useProgress } from '../state/useProgress';
 
 export function Explore({ route }: { route: Route }) {
   const wide = useMedia('(min-width: 1260px)');
