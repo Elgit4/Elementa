@@ -65,6 +65,17 @@ try {
   });
   await layoutPage.goto(`${origin}/#/`, { waitUntil: 'networkidle' });
   await layoutPage.getByRole('heading', { name: 'Make chemistry click.' }).waitFor();
+  const dashboardOrder = await layoutPage.locator('.home-screen').evaluate((element) =>
+    [...element.children].map((child) => {
+      if (child.classList.contains('home-hero')) return 'home-hero';
+      if (child.classList.contains('next-lesson')) return 'next-lesson';
+      if (child.classList.contains('home-achievements')) return 'home-achievements';
+      if (child.classList.contains('home-columns')) return 'home-columns';
+      return 'unexpected';
+    }),
+  );
+  assert.deepEqual(dashboardOrder, ['home-hero', 'next-lesson', 'home-achievements', 'home-columns'],
+    'Achievements should sit directly after the next-step card and before the activity dashboard');
   await layoutPage.locator('.offline-ready-toast').waitFor({ state: 'visible', timeout: 10_000 });
   assert.equal(
     await layoutPage.locator('.offline-ready-toast').evaluate((element) => getComputedStyle(element).position),
@@ -79,6 +90,26 @@ try {
     `Offline-ready toast should leave the status stack out of flow; height was ${firstRunLayout.statusStackHeight}px`);
   assert.ok(firstRunLayout.cls < 0.01,
     `First-run mobile Home should remain visually stable; observed CLS was ${firstRunLayout.cls.toFixed(4)}`);
+
+  await layoutPage.goto(`${origin}/#/footer-smoke`, { waitUntil: 'networkidle' });
+  await layoutPage.getByRole('heading', { name: 'Page not found' }).waitFor();
+  const mobileFooterLayout = await layoutPage.locator('.app-credit').evaluate((footer) => {
+    const main = document.querySelector('main');
+    const footerRect = footer.getBoundingClientRect();
+    const mainRect = main.getBoundingClientRect();
+    const mainStyle = getComputedStyle(main);
+    return {
+      display: mainStyle.display,
+      direction: mainStyle.flexDirection,
+      bottomGap: mainRect.bottom - footerRect.bottom,
+      paddingBottom: Number.parseFloat(mainStyle.paddingBottom),
+    };
+  });
+  assert.equal(mobileFooterLayout.display, 'flex', 'The app content area should use a column flex layout');
+  assert.equal(mobileFooterLayout.direction, 'column', 'The app content should flow vertically');
+  assert.ok(Math.abs(mobileFooterLayout.bottomGap - mobileFooterLayout.paddingBottom) < 2,
+    'Powered by Eltech should sit at the bottom of a short mobile page, above the navigation bar');
+  await layoutPage.goto(`${origin}/#/`, { waitUntil: 'networkidle' });
   await layoutContext.close();
 
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });

@@ -214,6 +214,22 @@ export function Home() {
         <a className="btn primary next-lesson-action" href={`#/learn/${lesson.id}`}>{lessonLabel} <ArrowRight size={16} aria-hidden="true" /></a>
       </section>
 
+      <details className="home-achievements card">
+        <summary>
+          <span className="achievement-title"><Medal size={18} aria-hidden="true" /> Achievements</span>
+          <span className="achievement-meta">{earned} of {allBadges.length} earned <span className="achievement-toggle">View</span></span>
+        </summary>
+        <ul className="badge-grid">
+          {allBadges.map((b) => (
+            <li key={b.id} className="badge" data-earned={b.earned}>
+              <AchievementArt id={b.id} earned={b.earned} />
+              <b>{b.title}</b>
+              <small>{b.earned ? 'Earned' : b.how}</small>
+            </li>
+          ))}
+        </ul>
+      </details>
+
       <div className="home-columns">
         <section className="home-practice" aria-labelledby="prac-title">
           <div className="home-section-heading">
@@ -288,21 +304,7 @@ export function Home() {
           </ul>
         </section>
 
-        <details className="home-achievements card">
-          <summary>
-            <span className="achievement-title"><Medal size={18} aria-hidden="true" /> Achievements</span>
-            <span className="achievement-meta">{earned} of {allBadges.length} earned <span className="achievement-toggle">View</span></span>
-          </summary>
-          <ul className="badge-grid">
-            {allBadges.map((b) => (
-              <li key={b.id} className="badge" data-earned={b.earned}>
-                <AchievementArt id={b.id} earned={b.earned} />
-                <b>{b.title}</b>
-                <small>{b.earned ? 'Earned' : b.how}</small>
-              </li>
-            ))}
-          </ul>
-        </details>
+
 
         <section className="home-recent card" aria-labelledby="recent-title">
           <div className="section-head home-card-heading">
