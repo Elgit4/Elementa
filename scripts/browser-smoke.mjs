@@ -111,7 +111,7 @@ try {
   // The ionic lab updates from the selected elements and progresses through its steps.
   await page.goto(`${origin}/#/lab/ionic`, { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: 'Ionic bonding: electron transfer' }).waitFor();
-  await page.getByLabel('Metal').selectOption('12');
+  await page.getByLabel('Metal', { exact: true }).selectOption('12');
   await page.getByRole('button', { name: 'Next step' }).click();
   await page.getByRole('heading', { name: 'Electrons are transferred' }).waitFor();
   await page.getByRole('button', { name: 'Next step' }).click();
