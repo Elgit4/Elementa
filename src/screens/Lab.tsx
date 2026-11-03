@@ -10,7 +10,7 @@ import { Spinner } from '../components/Loading';
 import { PageHeader, Breadcrumbs } from '../components/PageHeader';
 import { go, type Route } from '../router';
 import { Reactions } from '../components/Reactions';
-import { useProgress } from '../state/ProgressContext';
+import { useProgress } from '../state/useProgress';
 import { bestScore, mastery, recordAttempt } from '../engine/progress';
 import { BONDING_QUIZ_ID, BONDING_QUIZ_LENGTH, bondingQuestions } from '../engine/bondingQuiz';
 import { IONIC_METALS, IONIC_NONMETALS, MOLECULES, analyseMolecule, displayFormula, ionicCompound, ionicSteps } from '../engine/bonding';
