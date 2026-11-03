@@ -9,6 +9,8 @@ export interface LessonSection {
   example?: { title: string; lines: string[] };
   /** Link into the atomic explorer, e.g. { symbolNumber: 6, label: 'Try carbon-14' }. */
   tryIt?: { element: number; isotope?: number; charge?: number; label: string };
+  /** One formative question to reinforce the section's central idea. */
+  check: Question;
 }
 
 export interface Lesson {
@@ -25,6 +27,26 @@ export interface Lesson {
 }
 
 export const ATOMS_QUIZ_ID = 'atoms-quiz';
+
+const check = (
+  id: string,
+  stem: string,
+  choices: [string, string, string],
+  correctIndex: number,
+  explanation: string,
+  notes: [string, string],
+): Question => {
+  const ids = ['a', 'b', 'c'];
+  const wrongIds = ids.filter((_, index) => index !== correctIndex);
+  return {
+    id,
+    stem,
+    choices: choices.map((text, index) => ({ id: ids[index], text })),
+    correct: ids[correctIndex],
+    explanation,
+    distractorNotes: Object.fromEntries(wrongIds.map((choiceId, index) => [choiceId, notes[index]])),
+  };
+};
 
 export const LESSONS: Lesson[] = [
   {
@@ -50,6 +72,14 @@ export const LESSONS: Lesson[] = [
           'A proton carries a charge of +1. A neutron has no charge. An electron carries a charge of −1.',
           'Protons and neutrons each have a mass of about 1 atomic mass unit. An electron is about 1840 times lighter, so almost all of an atom’s mass is in its nucleus.',
         ],
+        check: check(
+          'atoms-particles-check',
+          'Which subatomic particle has a relative charge of −1?',
+          ['Proton', 'Neutron', 'Electron'],
+          2,
+          'An electron has a relative charge of −1. A proton is +1, while a neutron has no charge.',
+          ['A proton carries a positive relative charge of +1.', 'A neutron is electrically neutral; its relative charge is 0.'],
+        ),
       },
       {
         id: 'atomic-number',
@@ -60,6 +90,14 @@ export const LESSONS: Lesson[] = [
         ],
         example: { title: 'Worked example: sodium', lines: ['Atomic number = 11', 'Protons = 11', 'Electrons in a neutral atom = 11'] },
         tryIt: { element: 11, label: 'See sodium in the atomic explorer' },
+        check: check(
+          'atoms-atomic-number-check',
+          'A neutral oxygen atom has atomic number 8. How many electrons does it have?',
+          ['6', '8', '16'],
+          1,
+          'Atomic number 8 means the atom has 8 protons. Because it is neutral, it also has 8 electrons.',
+          ['A neutral atom has equal numbers of protons and electrons; oxygen has 8 protons.', '16 is not the electron count. It may be confused with a mass number, but no mass number is given here.'],
+        ),
       },
       {
         id: 'isotopes',
@@ -74,6 +112,14 @@ export const LESSONS: Lesson[] = [
           lines: ['Carbon-12: neutrons = 12 − 6 = 6', 'Carbon-14: neutrons = 14 − 6 = 8', 'Both have 6 protons and 6 electrons when neutral.'],
         },
         tryIt: { element: 6, isotope: 14, label: 'Switch between carbon-12 and carbon-14' },
+        check: check(
+          'atoms-isotopes-check',
+          'A sodium-23 atom has atomic number 11. How many neutrons does it contain?',
+          ['11', '12', '23'],
+          1,
+          'Neutrons = mass number − atomic number = 23 − 11 = 12.',
+          ['11 is the number of protons, given by the atomic number.', '23 is the mass number: protons and neutrons added together.'],
+        ),
       },
       {
         id: 'ram',
@@ -86,6 +132,14 @@ export const LESSONS: Lesson[] = [
           title: 'Worked example: chlorine',
           lines: ['About 76% of chlorine atoms are chlorine-35', 'About 24% are chlorine-37', 'Weighted average ≈ 0.76 × 35 + 0.24 × 37 ≈ 35.5'],
         },
+        check: check(
+          'atoms-relative-mass-check',
+          'A sample contains 75% of an isotope with mass 35 and 25% of an isotope with mass 37. What is the weighted average?',
+          ['35.0', '35.5', '36.0'],
+          1,
+          'Weighted average = (0.75 × 35) + (0.25 × 37) = 26.25 + 9.25 = 35.5.',
+          ['35.0 would mean the heavier isotope made no contribution to the average.', '36.0 is the simple midpoint; the isotope with mass 35 is more abundant, so the average must be closer to 35.'],
+        ),
       },
       {
         id: 'shells',
@@ -97,6 +151,14 @@ export const LESSONS: Lesson[] = [
         ],
         example: { title: 'Worked example: chlorine (17 electrons)', lines: ['First shell: 2', 'Second shell: 8', 'Third shell: 7', 'Electron arrangement: 2, 8, 7'] },
         tryIt: { element: 17, label: 'Build the chlorine atom' },
+        check: check(
+          'atoms-shells-check',
+          'What is the shell arrangement of a neutral chlorine atom with 17 electrons?',
+          ['2, 7, 8', '2, 8, 7', '2, 8, 8'],
+          1,
+          'The first shell takes 2 electrons and the second takes 8. The remaining 7 occupy the third shell: 2, 8, 7.',
+          ['Shells fill from the inside out. The second shell is filled to 8 before electrons are added to the third.', '2 + 8 + 8 = 18 electrons. That is one more electron than a neutral chlorine atom has.'],
+        ),
       },
       {
         id: 'ions',
@@ -108,6 +170,14 @@ export const LESSONS: Lesson[] = [
         ],
         example: { title: 'Worked example: Mg²⁺', lines: ['Magnesium atom: 12 protons, 12 electrons (2, 8, 2)', 'Loses 2 electrons', 'Mg²⁺ ion: 12 protons, 10 electrons (2, 8)'] },
         tryIt: { element: 12, charge: 2, label: 'Make Mg²⁺' },
+        check: check(
+          'atoms-ions-check',
+          'A neutral magnesium atom loses two electrons. What charge does the resulting ion have?',
+          ['2−', '1+', '2+'],
+          2,
+          'Losing two negatively charged electrons leaves the atom with two more protons than electrons, so the ion has a 2+ charge.',
+          ['Losing electrons makes an ion positive, not negative.', 'The atom has lost two electrons, so its positive charge is +2 rather than +1.'],
+        ),
       },
     ],
   },
