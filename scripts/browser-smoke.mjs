@@ -89,6 +89,25 @@ try {
   await page.goto(`${origin}/#/`, { waitUntil: 'networkidle' });
   assert.equal(await page.locator('main h1').count(), 1, 'Home should render one primary heading');
 
+  // The sourced character artwork must be served locally and load as real images.
+  for (const asset of ['peep-14.svg', 'peep-66.svg', 'peep-89.svg']) {
+    const response = await page.request.get(`${origin}/illustrations/open-peeps/${asset}`);
+    assert.equal(response.status(), 200, `Open Peeps asset ${asset} should be available locally`);
+    assert.match(response.headers()['content-type'] ?? '', /image\/svg\+xml|text\/xml/,
+      `Open Peeps asset ${asset} should be served as SVG`);
+  }
+  const homeCharacter = page.locator('.home-hero-art img.chem-mascot');
+  await homeCharacter.waitFor();
+  const characterStatus = await homeCharacter.evaluate((image) => ({
+    complete: image.complete,
+    naturalWidth: image.naturalWidth,
+    source: new URL(image.currentSrc).pathname,
+  }));
+  assert.equal(characterStatus.complete, true, 'The Home character illustration should finish loading');
+  assert.ok(characterStatus.naturalWidth > 0, 'The Home character illustration should have intrinsic dimensions');
+  assert.match(characterStatus.source, /^\/illustrations\/open-peeps\//,
+    'The Home character should use a locally hosted Open Peeps asset');
+
   // Daily goal opens a modal, can be dismissed, and completes only after a correct answer.
   const dailyTask = page.locator('.home-quests button.quest');
   assert.equal(await dailyTask.count(), 1, 'The daily challenge should be an actionable goal');
