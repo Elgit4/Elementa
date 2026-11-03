@@ -112,6 +112,7 @@ describe('badges and quests', () => {
   it('quests are only done when stored progress proves it', () => {
     const q0 = quests(emptyProgress(), today);
     expect(q0).toHaveLength(3); expect(q0.every((q) => !q.done)).toBe(true);
+    expect(q0.find((q) => q.id === 'daily')!.detail).toBe('+25 XP');
     let p = recordDaily(emptyProgress(), '2026-11-01', false);
     expect(quests(p, today).find((q) => q.id === 'daily')!.done).toBe(false);
     p = recordDaily(p, '2026-11-01', true);
