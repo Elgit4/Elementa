@@ -467,3 +467,65 @@
 @media (prefers-reduced-motion: reduce) {
   .chem-mascot { animation: none !important; transition: none !important; }
 }
+
+/* Illustrated achievement badges: distinguish earned milestones without relying on lock/check alone. */
+.home-achievements .badge .achievement-art {
+  position: relative;
+  display: grid;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--badge-tone) 34%, var(--border));
+  border-radius: 15px;
+  color: var(--badge-tone);
+  background: color-mix(in oklab, var(--badge-tone) 12%, var(--surface-2));
+}
+.achievement-art-orbit {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: .22;
+}
+.achievement-art-icon { position: relative; z-index: 1; }
+.achievement-art-mark {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  z-index: 2;
+  padding: 1px 3px;
+  border-radius: 4px;
+  color: var(--text);
+  background: var(--surface);
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.achievement-art[data-earned='false'] { filter: saturate(.35); opacity: .68; }
+.achievement-art[data-earned='true'] { box-shadow: 0 3px 10px color-mix(in oklab, var(--badge-tone) 18%, transparent); }
+.tone-mint { --badge-tone: #22c7a9; }
+.tone-gold { --badge-tone: #d99a27; }
+.tone-blue { --badge-tone: #4b9be8; }
+.tone-violet { --badge-tone: #9b83e8; }
+.tone-teal { --badge-tone: #19a9a2; }
+.tone-coral { --badge-tone: #e27a72; }
+.tone-orange { --badge-tone: #e58a32; }
+.tone-indigo { --badge-tone: #7787df; }
+.home-achievements .badge-grid { align-items: stretch; }
+.home-achievements .badge { min-height: 136px; justify-content: flex-start; }
+.home-achievements .badge .achievement-art { width: 44px; height: 44px; border-radius: 14px; }
+.home-achievements .badge small {
+  display: block;
+  max-width: 25ch;
+  color: var(--muted);
+  font-size: .7rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 560px) {
+  .home-achievements .badge { min-height: 128px; padding: 12px 8px; }
+  .home-achievements .badge small { font-size: .72rem; }
+}
