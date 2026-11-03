@@ -27,7 +27,8 @@ function Ionic() {
   const last = step === steps.length - 1;
   const change = (fn: () => void) => { fn(); setStep(0); };
   return (
-    <section aria-labelledby="ionic-h" className="lab-experiment lab-experiment-ionic">\n      <div className="lab-experiment-kicker"><span>01 / 03 · GUIDED SIMULATION</span><span className="lab-concept-tag">ELECTRON TRANSFER</span></div>
+    <section aria-labelledby="ionic-h" className="lab-experiment lab-experiment-ionic">
+      <div className="lab-experiment-kicker"><span>01 / 03 · GUIDED SIMULATION</span><span className="lab-concept-tag">ELECTRON TRANSFER</span></div>
       <h2 id="ionic-h">Ionic bonding: electron transfer</h2>
       <p className="muted">A metal atom gives electrons to a non-metal atom. Choose a metal and a non-metal, then step through what happens.</p>
       <div className="lab-controls lab-controls-featured">
@@ -74,7 +75,8 @@ function Covalent() {
   const a = analyseMolecule(def);
   const description = `${def.name}, ${def.formula}. ${a.bondLabels.join('. ')}. ${a.totalLonePairs} lone ${a.totalLonePairs === 1 ? 'pair' : 'pairs'} in total.`;
   return (
-    <section aria-labelledby="cov-h" className="lab-experiment lab-experiment-covalent">\n      <div className="lab-experiment-kicker"><span>02 / 03 · GUIDED SIMULATION</span><span className="lab-concept-tag">SHARED ELECTRONS</span></div>
+    <section aria-labelledby="cov-h" className="lab-experiment lab-experiment-covalent">
+      <div className="lab-experiment-kicker"><span>02 / 03 · GUIDED SIMULATION</span><span className="lab-concept-tag">SHARED ELECTRONS</span></div>
       <h2 id="cov-h">Covalent bonding: sharing electrons</h2>
       <p className="muted">Non-metal atoms share pairs of electrons so that each atom ends up with a full outer shell: two electrons for hydrogen, eight for the others.</p>
       <div className="chips molecule-picker" role="group" aria-label="Choose a molecule">
@@ -121,7 +123,8 @@ function Practise({ onBack, initialTopic = 'bonding' }: { onBack: (tab: 'ionic' 
   const best = bestScore(progress, T.id);
   const fresh = () => { setSaved(null); setSeed(Math.floor(Math.random() * 1e6)); setAttempt((a) => a + 1); };
   return (
-    <section aria-labelledby="practise-h" className="lab-experiment lab-experiment-quiz">\n      <div className="lab-experiment-kicker"><span>04 / 04 · KNOWLEDGE CHECK</span><span className="lab-concept-tag">FRESH QUESTION SET</span></div>
+    <section aria-labelledby="practise-h" className="lab-experiment lab-experiment-quiz">
+      <div className="lab-experiment-kicker"><span>04 / 04 · KNOWLEDGE CHECK</span><span className="lab-concept-tag">FRESH QUESTION SET</span></div>
       <h2 id="practise-h">Practise: {T.title}</h2>
       <div className="chips" role="group" aria-label="Practice topic">
         {(Object.keys(TOPICS) as Topic[]).map((k) => <button key={k} className="chip" aria-pressed={topic === k} onClick={() => { setTopic(k); fresh(); }}>{k === 'bonding' ? 'Bonding' : 'Periodic trends'}</button>)}
