@@ -59,12 +59,17 @@ The latest GitHub Actions run for this branch executes dependency auditing, Type
 
 The full dependency audit currently identifies 10 low/moderate findings in the development/build dependency tree. The audit also reports production dependencies separately; see the current workflow run for the exact counts. No high or critical findings were reported in the full audit.
 
+## Browser smoke coverage
+
+GitHub Actions runs a Playwright Chromium smoke suite against the production preview. It checks primary navigation; course and lesson rendering; formative-check reset between lesson sections; saved lesson position after reload; a 375px mobile viewport without page-level horizontal overflow; theme switching; periodic-table search and element details; isotope selection in the Atomic Explorer; completion and result display in the ionic activity; molecule selection in the covalent activity; reaction-answer reveal; bonding and periodic-trends quiz routes; and the Practice and Lab hubs.
+
+These are targeted interaction smoke tests, not a full accessibility or visual-regression suite.
+
 ## Not yet verified
 
-- A maintained Playwright/browser end-to-end suite is not present in this branch, so there is no current automated claim for screen rendering, keyboard flows or visual regressions.
-- Real devices: low-end Android, iOS Safari, install prompt, persistent-storage grant.
-- Offline/PWA install and update behavior on real browsers.
-- Lighthouse performance/accessibility audit.
+- Real-device behavior on low-end Android and iOS Safari, including the install prompt and persistent-storage grant.
+- Full PWA install, offline-first behavior and update flow on real browsers and devices.
+- Lighthouse performance and accessibility audit.
 - Screen-reader testing with real assistive technology.
 - Usability pilot with students; deployment/hosting; analytics.
 - The published atomic-structure lesson remains draft content awaiting chemistry teacher review.
