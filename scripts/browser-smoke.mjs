@@ -77,6 +77,20 @@ try {
   assert.deepEqual(dashboardOrder, ['home-hero', 'next-lesson', 'home-achievements', 'home-columns'],
     'Achievements should sit directly after the next-step card and before the activity dashboard');
   await layoutPage.locator('.offline-ready-toast').waitFor({ state: 'visible', timeout: 10_000 });
+  assert.equal(
+    await layoutPage.locator('.offline-ready-toast').evaluate((element) => getComputedStyle(element).position),
+    'fixed',
+    'Offline-ready confirmation must not participate in document flow',
+  );
+  const firstRunLayout = await layoutPage.evaluate(() => ({
+    cls: window.__elementaCLS,
+    statusStackHeight: document.querySelector('.status-stack')?.getBoundingClientRect().height ?? 0,
+  }));
+  assert.ok(firstRunLayout.statusStackHeight < 1,
+    `Offline-ready toast should leave the status stack out of flow; height was ${firstRunLayout.statusStackHeight}px`);
+  assert.ok(firstRunLayout.cls < 0.01,
+    `First-run mobile Home should remain visually stable; observed CLS was ${firstRunLayout.cls.toFixed(4)}`);
+
   await layoutPage.goto(`${origin}/#/footer-smoke`, { waitUntil: 'networkidle' });
   await layoutPage.getByRole('heading', { name: 'Page not found' }).waitFor();
   const mobileFooterLayout = await layoutPage.locator('.app-credit').evaluate((footer) => {
@@ -96,19 +110,6 @@ try {
   assert.ok(Math.abs(mobileFooterLayout.bottomGap - mobileFooterLayout.paddingBottom) < 2,
     'Powered by Eltech should sit at the bottom of a short mobile page, above the navigation bar');
   await layoutPage.goto(`${origin}/#/`, { waitUntil: 'networkidle' });
-  assert.equal(
-    await layoutPage.locator('.offline-ready-toast').evaluate((element) => getComputedStyle(element).position),
-    'fixed',
-    'Offline-ready confirmation must not participate in document flow',
-  );
-  const firstRunLayout = await layoutPage.evaluate(() => ({
-    cls: window.__elementaCLS,
-    statusStackHeight: document.querySelector('.status-stack')?.getBoundingClientRect().height ?? 0,
-  }));
-  assert.ok(firstRunLayout.statusStackHeight < 1,
-    `Offline-ready toast should leave the status stack out of flow; height was ${firstRunLayout.statusStackHeight}px`);
-  assert.ok(firstRunLayout.cls < 0.01,
-    `First-run mobile Home should remain visually stable; observed CLS was ${firstRunLayout.cls.toFixed(4)}`);
   await layoutContext.close();
 
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
