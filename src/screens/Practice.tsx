@@ -4,7 +4,7 @@ import { Spinner } from '../components/Loading';
 import { bestScore } from '../engine/progress';
 import { BONDING_QUIZ_ID } from '../engine/bondingQuiz';
 import { TRENDS_QUIZ_ID } from '../engine/trendsQuiz';
-import { useProgress } from '../state/ProgressContext';
+import { useProgress } from '../state/useProgress';
 
 const ACTIVITIES = [
   {
