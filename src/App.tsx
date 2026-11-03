@@ -33,7 +33,7 @@ function Shell() {
     document.title = `${TITLES[activeSection] ?? 'Not found'} · Elementa`;
     if (first.current) { first.current = false; return; }
     mainRef.current?.focus({ preventScroll: true });
-  }, [section]);
+  }, [activeSection, section]);
 
   let screen;
   switch (section) {
