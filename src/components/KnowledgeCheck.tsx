@@ -1,4 +1,5 @@
 import { useId, useState } from 'react';
+import '../styles-knowledge-check.css';
 import { Check, X } from 'lucide-react';
 import { evaluate, type Question } from '../engine/quiz';
 
