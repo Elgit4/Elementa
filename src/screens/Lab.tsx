@@ -26,10 +26,10 @@ function Ionic() {
   const last = step === steps.length - 1;
   const change = (fn: () => void) => { fn(); setStep(0); };
   return (
-    <section aria-labelledby="ionic-h">
+    <section aria-labelledby="ionic-h" className="lab-experiment lab-experiment-ionic">\n      <div className="lab-experiment-kicker"><span>01 / 03 · GUIDED SIMULATION</span><span className="lab-concept-tag">ELECTRON TRANSFER</span></div>
       <h2 id="ionic-h">Ionic bonding: electron transfer</h2>
       <p className="muted">A metal atom gives electrons to a non-metal atom. Choose a metal and a non-metal, then step through what happens.</p>
-      <div className="lab-controls">
+      <div className="lab-controls lab-controls-featured">
         <div className="field"><label htmlFor="lab-metal">Metal</label>
           <select id="lab-metal" className="select" value={metal} onChange={(e) => change(() => setMetal(Number(e.target.value)))}>
             {IONIC_METALS.map((z) => <option key={z} value={z}>{label(z)}</option>)}
@@ -72,10 +72,10 @@ function Covalent() {
   const a = analyseMolecule(def);
   const description = `${def.name}, ${def.formula}. ${a.bondLabels.join('. ')}. ${a.totalLonePairs} lone ${a.totalLonePairs === 1 ? 'pair' : 'pairs'} in total.`;
   return (
-    <section aria-labelledby="cov-h">
+    <section aria-labelledby="cov-h" className="lab-experiment lab-experiment-covalent">\n      <div className="lab-experiment-kicker"><span>02 / 03 · GUIDED SIMULATION</span><span className="lab-concept-tag">SHARED ELECTRONS</span></div>
       <h2 id="cov-h">Covalent bonding: sharing electrons</h2>
       <p className="muted">Non-metal atoms share pairs of electrons so that each atom ends up with a full outer shell: two electrons for hydrogen, eight for the others.</p>
-      <div className="chips" role="group" aria-label="Choose a molecule">
+      <div className="chips molecule-picker" role="group" aria-label="Choose a molecule">
         {MOLECULES.map((m) => <button key={m.id} className="chip" aria-pressed={id === m.id} onClick={() => setId(m.id)}>{displayFormula(m.formula)}</button>)}
       </div>
       <div className="lab-grid">
@@ -119,7 +119,7 @@ function Practise({ onBack, initialTopic = 'bonding' }: { onBack: (tab: 'ionic' 
   const best = bestScore(progress, T.id);
   const fresh = () => { setSaved(null); setSeed(Math.floor(Math.random() * 1e6)); setAttempt((a) => a + 1); };
   return (
-    <section aria-labelledby="practise-h">
+    <section aria-labelledby="practise-h" className="lab-experiment lab-experiment-quiz">\n      <div className="lab-experiment-kicker"><span>04 / 04 · KNOWLEDGE CHECK</span><span className="lab-concept-tag">FRESH QUESTION SET</span></div>
       <h2 id="practise-h">Practise: {T.title}</h2>
       <div className="chips" role="group" aria-label="Practice topic">
         {(Object.keys(TOPICS) as Topic[]).map((k) => <button key={k} className="chip" aria-pressed={topic === k} onClick={() => { setTopic(k); fresh(); }}>{k === 'bonding' ? 'Bonding' : 'Periodic trends'}</button>)}
@@ -172,23 +172,57 @@ export function Lab({ route }: { route: Route }) {
     const bond = bestScore(progress, BONDING_QUIZ_ID), trend = bestScore(progress, TRENDS_QUIZ_ID);
     return (
       <>
-        <PageHeader Icon={FlaskConical} eyebrow="Interactive activities" title="Virtual lab" subtitle="Explore how atoms bond and react, then test yourself. Every number is calculated from the element data and checked by tests." />
-        <div className="lab-hub">
-          {ACTIVITIES.map(({ id, title, blurb, Icon, tags }) => (
-            <a key={id} className="tile-card lab-card" href={`#/lab/${id}`}>
-              <span className="ico"><Icon size={22} aria-hidden="true" /></span>
-              <h2 className="lab-h">{title}</h2>
-              <p>{blurb}</p>
-              <span className="meta">{tags.map((t) => <span key={t} className="tag">{t}</span>)}</span>
-              <span className="tile-foot">
-                <span>{id === 'practise' ? `Bonding ${bond === null ? 'not tried' : `best ${bond}%`}. Trends ${trend === null ? 'not tried' : `best ${trend}%`}.` : 'Open'}</span>
-                <ArrowRight size={16} aria-hidden="true" />
-              </span>
-            </a>
-          ))}
-        </div>
-        <div className="card lab-foot">
-          <p className="muted small">These activities use the simplified electron-shell model taught in SHS chemistry, with main-group elements only. They are a draft: they have not yet been reviewed by a chemistry teacher or checked against the current WASSCE syllabus. To see how a single atom becomes an ion, try the <a href="#/atom/11?q=1">atomic explorer</a>.</p>
+        <PageHeader Icon={FlaskConical} eyebrow="Explore · Observe · Understand" title="Virtual lab" subtitle="Step inside the science. Explore visual models, change the conditions and see how chemistry works." />
+        <section className="lab-intro" aria-labelledby="lab-intro-title">
+          <div className="lab-intro-copy">
+            <span className="lab-intro-kicker">ELEMENTA INTERACTIVE WORKSPACE</span>
+            <h2 id="lab-intro-title">Big ideas. <span>Made visible.</span></h2>
+            <p>Move beyond the page with guided models for bonding and reactions, then put your understanding to the test.</p>
+          </div>
+          <div className="lab-intro-facts" aria-label="Laboratory activities">
+            <div><strong>03</strong><span>guided simulations</span></div>
+            <div><strong>{String(MOLECULES.length).padStart(2, '0')}</strong><span>molecules to explore</span></div>
+            <div><strong>07</strong><span>reaction examples</span></div>
+          </div>
+          <div className="lab-intro-mark" aria-hidden="true"><FlaskConical size={58} strokeWidth={1.25} /></div>
+        </section>
+
+        <section className="lab-activity-section" aria-labelledby="lab-activity-title">
+          <div className="lab-section-heading">
+            <div>
+              <span className="eyebrow">CHOOSE AN EXPERIENCE</span>
+              <h2 id="lab-activity-title">Explore the workbench</h2>
+              <p>Each activity focuses on one important chemistry idea.</p>
+            </div>
+            <span className="lab-activity-count">04 EXPERIENCES</span>
+          </div>
+          <div className="lab-hub">
+            {ACTIVITIES.map(({ id, title, blurb, Icon, tags }, index) => (
+              <a key={id} className={'lab-card lab-card-' + id} href={'#/lab/' + id}>
+                <div className="lab-card-head">
+                  <span className="lab-card-symbol"><Icon size={25} strokeWidth={1.7} aria-hidden="true" /></span>
+                  <span className="lab-card-number">0{index + 1}</span>
+                </div>
+                <div className="lab-card-copy">
+                  <span className="lab-card-category">{id === 'practise' ? 'KNOWLEDGE CHECK' : 'GUIDED SIMULATION'}</span>
+                  <h3 className="lab-h">{title}</h3>
+                  <p>{blurb}</p>
+                </div>
+                <div className="lab-card-meta">
+                  {tags.map((tag) => <span key={tag} className="tag">{tag}</span>)}
+                </div>
+                <span className="lab-card-foot">
+                  <span>{id === 'practise' ? 'Bonding ' + (bond === null ? 'not tried' : 'best ' + bond + '%') + ' · Trends ' + (trend === null ? 'not tried' : 'best ' + trend + '%') : id === 'covalent' ? MOLECULES.length + ' molecule models' : id === 'reactions' ? 'Explore and balance' : 'Choose elements and step through'}</span>
+                  <span className="lab-card-action">{id === 'practise' ? 'Test knowledge' : 'Open simulation'} <ArrowRight size={16} aria-hidden="true" /></span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <div className="lab-foot lab-disclaimer">
+          <div className="lab-disclaimer-mark"><FlaskConical size={18} aria-hidden="true" /></div>
+          <p className="muted small">These are educational screen-based models, not instructions for carrying out chemical reactions physically. The bonding activities use a simplified electron-shell model for main-group elements. This draft content has not yet been reviewed by a chemistry teacher or checked against the current WASSCE syllabus. <a href="#/atom/11?q=1">Continue in the atomic explorer</a>.</p>
         </div>
       </>
     );
@@ -199,14 +233,20 @@ export function Lab({ route }: { route: Route }) {
     <>
       <Breadcrumbs items={[{ label: 'Virtual lab', href: '#/lab' }, { label: current.title }]} />
       <PageHeader Icon={current.Icon} eyebrow="Virtual lab" title={current.title} subtitle={current.blurb} />
-      <div className="seg" role="group" aria-label="Switch activity">
-        {ACTIVITIES.map((a) => <button key={a.id} className="chip" aria-pressed={tab === a.id} onClick={() => open(a.id)}>{a.title}</button>)}
-      </div>
-      <div className="lab-panel">
+      <div className="lab-workspace">
+        <div className="lab-workspace-heading">
+          <div><span className="lab-workspace-label">WORKSPACE</span><strong>{current.title}</strong></div>
+          <a className="lab-all-link" href="#/lab">All activities <ArrowRight size={15} aria-hidden="true" /></a>
+        </div>
+        <div className="seg lab-activity-nav" role="group" aria-label="Switch activity">
+          {ACTIVITIES.map((a) => <button key={a.id} className="chip" aria-pressed={tab === a.id} onClick={() => open(a.id)}>{a.title}</button>)}
+        </div>
+        <div className={'lab-panel lab-panel-' + tab}>
         {tab === 'ionic' ? <Ionic /> : tab === 'covalent' ? <Covalent /> : tab === 'reactions' ? <Reactions /> : <Practise key={route.segments[2] ?? 'bonding'} initialTopic={route.segments[2] === 'trends' ? 'trends' : 'bonding'} onBack={(t) => open(t)} />}
+        </div>
       </div>
-      <div className="card lab-foot">
-        <p className="muted small">Draft content: not yet reviewed by a chemistry teacher or checked against the current WASSCE syllabus. <a href="#/lab">Back to all activities</a>.</p>
+      <div className="lab-foot lab-disclaimer">
+        <p className="muted small">Educational screen-based model only. Draft content has not yet been reviewed by a chemistry teacher or checked against the current WASSCE syllabus.</p>
       </div>
     </>
   );
