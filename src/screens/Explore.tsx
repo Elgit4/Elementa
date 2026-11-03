@@ -69,6 +69,14 @@ export function Explore({ route }: { route: Route }) {
     <>
       <PageHeader Icon={Grid3x3} eyebrow="Explore" title="Periodic table" subtitle="All 118 elements. Select one to see its properties, atomic structure and electron configuration, or colour the table to see a periodic trend." />
 
+      <div className="explore-tools">
+        <div>
+          <strong>Explore beyond the table</strong>
+          <p className="muted small">Inspect particles, isotopes, ions and electron arrangements in an interactive atomic model.</p>
+        </div>
+        <a className="btn" href="#/atom/6">Open atomic explorer <span aria-hidden="true">→</span></a>
+      </div>
+
       <div className="toolbar">
         <div className="field search">
           <label htmlFor="el-search">Search elements</label>
