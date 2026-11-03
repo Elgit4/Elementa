@@ -3,6 +3,7 @@ import { ArrowRight, BookOpen, Check, GraduationCap } from 'lucide-react';
 import { Breadcrumbs, PageHeader } from '../components/PageHeader';
 import { Spinner } from '../components/Loading';
 import { LESSONS, QUESTIONS } from '../data/lessons';
+import { CURRICULUM } from '../data/curriculum';
 import { bestScore, completeLesson, mastery, recordAttempt, setLessonPosition } from '../engine/progress';
 import { Quiz } from '../components/Quiz';
 import { useProgress } from '../state/ProgressContext';
@@ -20,37 +21,77 @@ export function Learn({ route }: { route: Route }) {
 }
 
 function LessonList() {
-  const { progress } = useProgress();
+  const { progress, ready } = useProgress();
+  const completed = progress.completedLessons.length;
+  const total = LESSONS.length;
+
   return (
     <>
-      <PageHeader Icon={BookOpen} eyebrow="Learn" title="Learn and practise" subtitle="Short lessons, each with worked examples and a quiz that explains every answer." />
+      <PageHeader Icon={BookOpen} eyebrow="Learn" title="Your chemistry courses" subtitle="Build understanding step by step. Start with a topic, work through its lesson, then check what you know." />
       <div className="summary-strip">
-        <span className="pill"><GraduationCap size={16} aria-hidden="true" /> {progress.completedLessons.length} of {LESSONS.length} lessons completed</span>
-        <a className="pill" href="#/lab/practise">Practise in the lab</a>
+        <span className="pill"><GraduationCap size={16} aria-hidden="true" /> {ready ? `${completed} of ${total} lessons completed` : 'Loading your progress…'}</span>
+        <a className="pill" href="#/practice">Go to practice</a>
       </div>
-      <ul className="lesson-list">
-        {LESSONS.map((l) => {
-          const done = progress.completedLessons.includes(l.id);
-          const pos = progress.lessonPosition[l.id];
-          const best = bestScore(progress, l.quizId);
+      <div className="course-list">
+        {CURRICULUM.map((course) => {
+          const courseLessons = course.topics.flatMap((topic) => topic.lessonIds);
+          const courseDone = courseLessons.filter((id) => progress.completedLessons.includes(id)).length;
           return (
-            <li key={l.id} className={`card lesson-card${done ? ' done' : ''}`}>
-              <div className="lesson-row">
-                <span className="ico" aria-hidden="true">{done ? <Check size={24} /> : <BookOpen size={24} />}</span>
+            <section className="course-card card" key={course.id} aria-labelledby={`course-${course.id}`}>
+              <div className="course-card-heading">
                 <div>
-                <h2>{l.title}</h2>
-                <p className="muted">{l.summary}</p>
-                <p className="small muted">{l.minutes} minutes · {l.sections.length} sections · {QUESTIONS.length} quiz questions</p>
-                {!l.reviewed && <p className="small"><span className="tag predicted">Draft content</span> Not yet reviewed by a chemistry teacher.</p>}
-                {pos !== undefined && !done && <progress className="bar" value={pos + 1} max={l.sections.length} aria-label={`Progress: section ${pos + 1} of ${l.sections.length}`} />}
-                {done && <p className="small good-text"><Check size={14} aria-hidden="true" /> Completed{best !== null ? `. Best score ${best}%.` : '.'}</p>}
+                  <span className="eyebrow">COURSE · {course.level}</span>
+                  <h2 id={`course-${course.id}`}>{course.title}</h2>
+                  <p className="muted">{course.description}</p>
                 </div>
+                <span className="course-count">{courseDone}/{courseLessons.length} done</span>
               </div>
-              <a className="btn primary" href={`#/learn/${l.id}`}>{done ? 'Review lesson' : pos !== undefined ? 'Continue' : 'Start lesson'} <ArrowRight size={16} aria-hidden="true" /></a>
-            </li>
+              <div className="course-progress" role="progressbar" aria-label={`${course.title} progress`} aria-valuemin={0} aria-valuemax={courseLessons.length} aria-valuenow={courseDone}>
+                <span style={{ width: `${courseLessons.length ? (courseDone / courseLessons.length) * 100 : 0}%` }} />
+              </div>
+              {course.topics.map((topic, index) => {
+                const topicLessons = topic.lessonIds.map((id) => LESSONS.find((lesson) => lesson.id === id)).filter((lesson): lesson is (typeof LESSONS)[number] => Boolean(lesson));
+                const topicDone = topicLessons.filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
+                return (
+                  <section className="topic-group" key={topic.id} aria-labelledby={`topic-${topic.id}`}>
+                    <div className="topic-heading">
+                      <span className="topic-index">{String(index + 1).padStart(2, '0')}</span>
+                      <div>
+                        <h3 id={`topic-${topic.id}`}>{topic.title}</h3>
+                        <p className="muted small">{topic.description}</p>
+                      </div>
+                      <span className="topic-meta">{topicDone}/{topicLessons.length}</span>
+                    </div>
+                    <ul className="lesson-list">
+                      {topicLessons.map((lesson) => {
+                        const done = progress.completedLessons.includes(lesson.id);
+                        const pos = progress.lessonPosition[lesson.id];
+                        const best = bestScore(progress, lesson.quizId);
+                        return (
+                          <li key={lesson.id} className={`card lesson-card${done ? ' done' : ''}`}>
+                            <div className="lesson-row">
+                              <span className="ico" aria-hidden="true">{done ? <Check size={24} /> : <BookOpen size={24} />}</span>
+                              <div>
+                                <h4>{lesson.title}</h4>
+                                <p className="muted">{lesson.summary}</p>
+                                <p className="small muted">{lesson.minutes} min · {lesson.sections.length} sections · {QUESTIONS.length} questions</p>
+                                {!lesson.reviewed && <p className="small"><span className="tag predicted">Draft content</span> Awaiting chemistry teacher review.</p>}
+                                {pos !== undefined && !done && <progress className="bar" value={pos + 1} max={lesson.sections.length} aria-label={`Progress: section ${pos + 1} of ${lesson.sections.length}`} />}
+                                {done && <p className="small good-text"><Check size={14} aria-hidden="true" /> Completed{best !== null ? `. Best score ${best}%.` : '.'}</p>}
+                              </div>
+                            </div>
+                            <a className="btn primary" href={`#/learn/${lesson.id}`}>{done ? 'Review lesson' : pos !== undefined ? 'Continue' : 'Start lesson'} <ArrowRight size={16} aria-hidden="true" /></a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </section>
+                );
+              })}
+            </section>
           );
         })}
-      </ul>
+      </div>
     </>
   );
 }
