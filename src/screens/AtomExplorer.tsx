@@ -21,6 +21,14 @@ export function AtomExplorer({ route }: { route: Route }) {
   const { update } = useProgress();
   const z = route.segments[1] === undefined ? 6 : Number(route.segments[1]);
   const el = Number.isInteger(z) && z >= 1 && z <= 118 ? getElement(z) : undefined;
+  const charges = useMemo(() => ionCharges(el), [el]);
+  const isoParam = Number(route.query.get('iso'));
+  const iso = getIsotope(el, isoParam) ?? getIsotope(el, el.defaultIsotope)!;
+  const qParam = Number(route.query.get('q') ?? 0);
+  const charge = charges.includes(qParam) ? qParam : 0;
+
+  useEffect(() => { update((p) => viewElement(p, el.number)); }, [el.number, update]);
+
   if (!el) {
     return (
       <>
@@ -30,13 +38,6 @@ export function AtomExplorer({ route }: { route: Route }) {
       </>
     );
   }
-  const charges = useMemo(() => ionCharges(el), [el]);
-  const isoParam = Number(route.query.get('iso'));
-  const iso = getIsotope(el, isoParam) ?? getIsotope(el, el.defaultIsotope)!;
-  const qParam = Number(route.query.get('q') ?? 0);
-  const charge = charges.includes(qParam) ? qParam : 0;
-
-  useEffect(() => { update((p) => viewElement(p, el.number)); }, [el.number, update]);
 
   const p = particles(el.number, iso.mass, charge);
   const shells = ionShells(el.shells, charge) ?? el.shells;
