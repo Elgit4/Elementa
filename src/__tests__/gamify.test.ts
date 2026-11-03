@@ -92,7 +92,10 @@ describe('badges and quests', () => {
   });
   it('daily habit, explorer and first lesson', () => {
     let p = recordDaily(recordDaily(emptyProgress(), '2026-10-01', true), '2026-10-02', false);
-    expect(id(p, 'daily-3')).toBe(false); expect(id(recordDaily(p, '2026-10-03', true), 'daily-3')).toBe(true);
+    expect(id(p, 'daily-3')).toBe(false);
+    p = recordDaily(p, '2026-10-02', true);
+    expect(id(p, 'daily-3')).toBe(false);
+    expect(id(recordDaily(p, '2026-10-03', true), 'daily-3')).toBe(true);
     expect(id({ ...emptyProgress(), recentElements: [1, 2, 3, 4] }, 'explorer')).toBe(false);
     expect(id({ ...emptyProgress(), recentElements: [1, 2, 3, 4, 5] }, 'explorer')).toBe(true);
     expect(id(completeLesson(emptyProgress(), 'atoms'), 'first-lesson')).toBe(true);
@@ -106,6 +109,8 @@ describe('badges and quests', () => {
     const q0 = quests(emptyProgress(), today);
     expect(q0).toHaveLength(3); expect(q0.every((q) => !q.done)).toBe(true);
     let p = recordDaily(emptyProgress(), '2026-11-01', false);
+    expect(quests(p, today).find((q) => q.id === 'daily')!.done).toBe(false);
+    p = recordDaily(p, '2026-11-01', true);
     expect(quests(p, today).find((q) => q.id === 'daily')!.done).toBe(true);
     p = att(p, 'bonding', D(2026, 10, 31), 5);                    // yesterday does not count
     expect(quests(p, today).find((q) => q.id === 'practise')!.done).toBe(false);
