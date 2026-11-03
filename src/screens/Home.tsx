@@ -9,7 +9,7 @@ import { BONDING_QUIZ_ID } from '../engine/bondingQuiz';
 import { TRENDS_QUIZ_ID } from '../engine/trendsQuiz';
 import { badges, levelInfo, quests, streak, totalXp } from '../engine/gamify';
 import { PageSkeleton, Skeleton } from '../components/Loading';
-import { useProgress } from '../state/ProgressContext';
+import { useProgress } from '../state/useProgress';
 import { ChemistryMascot } from '../components/ChemistryMascot';
 import { AchievementArt } from '../components/AchievementArt';
 
