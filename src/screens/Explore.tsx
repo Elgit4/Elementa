@@ -12,6 +12,7 @@ import { TrendInfo } from '../components/TrendInfo';
 import { TRENDS, TREND_BY_ID, summarise, type TrendId } from '../engine/trends';
 import { ElementList } from '../components/ElementList';
 import { ElementDetail } from '../components/ElementDetail';
+import { ChemistryMascot } from '../components/ChemistryMascot';
 import { go, useMedia, type Route } from '../router';
 import { useProgress } from '../state/ProgressContext';
 
@@ -133,7 +134,7 @@ export function Explore({ route }: { route: Route }) {
         <div className="explore-main">
           {view === 'table' ? (
             <>
-              {query.trim() && results.length === 0 && <p className="empty">No element matches “{query}”. Try a name (iron), a symbol (Fe) or an atomic number (26).</p>}
+              {query.trim() && results.length === 0 && <div className="mascot-empty-state search-empty"><ChemistryMascot mood="think" size={88} /><p className="empty">No element matches “{query}”. Try a name (iron), a symbol (Fe) or an atomic number (26).</p></div>}
               <PeriodicTable selected={element?.number ?? null} matches={matches} familyFilter={trend ? null : family} tileSize={tile} trend={trend} summary={summary} theme={progress.theme} />
               {trend && summary && <TrendInfo trend={trend} summary={summary} />}
             </>
