@@ -157,7 +157,7 @@ try {
   await page.getByRole('heading', { name: 'Virtual lab', exact: true }).waitFor();
 
   assert.deepEqual(failures, [], 'The browser must not raise uncaught page errors');
-  console.log('Browser smoke tests passed: navigation, knowledge-check reset, progress reload, mobile overflow, theme, Practice and Lab.');
+  console.log('Browser smoke tests passed: learning flow, saved progress, mobile layout, theme, Explore, Atomic Explorer, ionic/covalent activities, reaction balancing, both quiz routes, Practice and Lab hubs.');
 } finally {
   if (browser) await browser.close();
   server.kill('SIGTERM');
