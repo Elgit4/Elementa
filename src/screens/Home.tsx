@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, Atom, BookOpen, Check, Clock3, FlaskConical, Flame, Lock, Medal, Scale, TrendingUp, Zap } from 'lucide-react';
+import { ArrowRight, Atom, BookOpen, Check, Clock3, FlaskConical, Flame, Medal, Scale, TrendingUp, Zap } from 'lucide-react';
 import { LESSONS } from '../data/lessons';
 import { getElement } from '../data';
 import { bestScore, dayKey, mastery, recordDaily } from '../engine/progress';
@@ -11,6 +11,7 @@ import { badges, levelInfo, quests, streak, totalXp } from '../engine/gamify';
 import { PageSkeleton, Skeleton } from '../components/Loading';
 import { useProgress } from '../state/ProgressContext';
 import { ChemistryMascot } from '../components/ChemistryMascot';
+import { AchievementArt } from '../components/AchievementArt';
 
 function DailyChallenge() {
   const { progress, update } = useProgress();
@@ -242,7 +243,7 @@ export function Home() {
           <ul className="badge-grid">
             {allBadges.map((b) => (
               <li key={b.id} className="badge" data-earned={b.earned}>
-                <span className="medal">{b.earned ? <Check size={20} aria-hidden="true" /> : <Lock size={18} aria-hidden="true" />}</span>
+                <AchievementArt id={b.id} earned={b.earned} />
                 <b>{b.title}</b>
                 <small>{b.earned ? 'Earned' : b.how}</small>
               </li>
