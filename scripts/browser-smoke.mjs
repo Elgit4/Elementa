@@ -127,6 +127,22 @@ try {
   const dailyDone = page.locator('.home-quests button.quest[data-done="true"]');
   await dailyDone.waitFor();
   assert.equal(await dailyDone.isDisabled(), true, 'A completed daily goal should no longer reopen');
+  await page.waitForFunction(async () => {
+    const dbRequest = indexedDB.open('elementa', 1);
+    const db = await new Promise((resolve, reject) => {
+      dbRequest.onsuccess = () => resolve(dbRequest.result);
+      dbRequest.onerror = () => reject(dbRequest.error);
+    });
+    const request = db.transaction('kv', 'readonly').objectStore('kv').get('progress');
+    const progress = await new Promise((resolve, reject) => {
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    db.close();
+    const now = new Date();
+    const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    return progress?.daily?.[key]?.correct === true;
+  }, null, { timeout: 10_000 });
   const dailyRecord = await page.evaluate(async () => {
     const dbRequest = indexedDB.open('elementa', 1);
     const db = await new Promise((resolve, reject) => {
