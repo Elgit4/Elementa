@@ -140,7 +140,7 @@ function LessonReader({ lessonId }: { lessonId: string }) {
           </p>
         )}
       </article>
-      <KnowledgeCheck question={s.check} />
+      <KnowledgeCheck key={s.id} question={s.check} />
       <div className="row between">
         <button className="btn" onClick={() => setStep(step - 1)} disabled={step === 0}>Back</button>
         {last
