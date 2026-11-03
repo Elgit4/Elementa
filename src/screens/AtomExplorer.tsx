@@ -7,7 +7,7 @@ import { isoelectronicNobleGas } from '../engine/display';
 import { AtomDiagram } from '../components/AtomDiagram';
 import { go, type Route } from '../router';
 import { viewElement } from '../engine/progress';
-import { useProgress } from '../state/ProgressContext';
+import { useProgress } from '../state/useProgress';
 
 function nav(z: number, iso?: number, q?: number) {
   const params = new URLSearchParams();
