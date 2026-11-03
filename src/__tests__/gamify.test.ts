@@ -54,6 +54,10 @@ describe('streak', () => {
     expect(streak(recordDaily(emptyProgress(), '2026-10-31', true), today)).toBe(1);
     expect(streak(recordDaily(emptyProgress(), '2026-10-30', true), today)).toBe(0);
   });
+  it('does not count an incorrect daily answer as study activity', () => {
+    expect(streak(recordDaily(emptyProgress(), '2026-10-31', false), today)).toBe(0);
+    expect(activeToday(recordDaily(emptyProgress(), '2026-11-01', false), today)).toBe(false);
+  });
   it('a gap breaks it, and quiz attempts count as activity', () => {
     let p = recordDaily(emptyProgress(), '2026-11-01', true);
     p = att(p, 'bonding', D(2026, 10, 30), 5);       // 31 Oct missing
