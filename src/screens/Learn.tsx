@@ -3,9 +3,9 @@ import { ArrowRight, BookOpen, Check, GraduationCap } from 'lucide-react';
 import { Breadcrumbs, PageHeader } from '../components/PageHeader';
 import { Spinner } from '../components/Loading';
 import { KnowledgeCheck } from '../components/KnowledgeCheck';
-import { LESSONS, QUESTIONS } from '../data/lessons';
+import { LESSONS, QUESTIONS, type Lesson } from '../data/lessons';
 import { CURRICULUM } from '../data/curriculum';
-import { bestScore, completeLesson, mastery, recordAttempt, setLessonPosition } from '../engine/progress';
+import { bestScore, completeLesson, mastery, recordAttempt, setLessonPosition, type Progress } from '../engine/progress';
 import { Quiz } from '../components/Quiz';
 import { useProgress } from '../state/useProgress';
 import { go, type Route } from '../router';
@@ -100,16 +100,28 @@ function LessonList() {
 function LessonReader({ lessonId }: { lessonId: string }) {
   const lesson = LESSONS.find((l) => l.id === lessonId)!;
   const { progress, update, ready } = useProgress();
-  const [step, setStep] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (ready && step === null) setStep(Math.min(progress.lessonPosition[lesson.id] ?? 0, lesson.sections.length - 1));
-  }, [ready, step, progress.lessonPosition, lesson]);
-  useEffect(() => { if (step !== null) update((p) => setLessonPosition(p, lesson.id, step)); }, [step, lesson.id, update]);
+  if (!ready) return <p className="muted" role="status"><Spinner label="Loading lesson" /> Loading lesson…</p>;
+
+  const initialStep = Math.min(progress.lessonPosition[lesson.id] ?? 0, lesson.sections.length - 1);
+  return <LessonReaderContent key={lesson.id} lesson={lesson} initialStep={initialStep} update={update} />;
+}
+
+function LessonReaderContent({
+  lesson,
+  initialStep,
+  update,
+}: {
+  lesson: Lesson;
+  initialStep: number;
+  update: (fn: (progress: Progress) => Progress) => void;
+}) {
+  const [step, setStep] = useState(initialStep);
+
+  useEffect(() => { update((p) => setLessonPosition(p, lesson.id, step)); }, [step, lesson.id, update]);
   useEffect(() => { document.getElementById('section-title')?.focus(); }, [step]);
 
-  if (step === null) return <p className="muted" role="status"><Spinner label="Loading lesson" /> Loading lesson…</p>;
-  const s = lesson.sections[step];
+  const section = lesson.sections[step];
   const last = step === lesson.sections.length - 1;
 
   return (
@@ -119,28 +131,28 @@ function LessonReader({ lessonId }: { lessonId: string }) {
       {step === 0 && (
         <div className="objectives">
           <h2>By the end of this lesson you can</h2>
-          <ul>{lesson.objectives.map((o) => <li key={o}>{o}</li>)}</ul>
+          <ul>{lesson.objectives.map((objective) => <li key={objective}>{objective}</li>)}</ul>
           {!lesson.reviewed && <p className="small muted">{lesson.syllabusNote}</p>}
         </div>
       )}
       <progress className="bar" value={step + 1} max={lesson.sections.length} aria-label={`Section ${step + 1} of ${lesson.sections.length}`} />
       <p className="small muted">Section {step + 1} of {lesson.sections.length}</p>
       <article aria-labelledby="section-title">
-        <h2 id="section-title" tabIndex={-1}>{s.title}</h2>
-        {s.body.map((para, i) => <p key={i} className="lesson-p">{para}</p>)}
-        {s.example && (
+        <h2 id="section-title" tabIndex={-1}>{section.title}</h2>
+        {section.body.map((paragraph, index) => <p key={index} className="lesson-p">{paragraph}</p>)}
+        {section.example && (
           <div className="example">
-            <h3>{s.example.title}</h3>
-            <ul>{s.example.lines.map((l) => <li key={l}>{l}</li>)}</ul>
+            <h3>{section.example.title}</h3>
+            <ul>{section.example.lines.map((line) => <li key={line}>{line}</li>)}</ul>
           </div>
         )}
-        {s.tryIt && (
+        {section.tryIt && (
           <p>
-            <a className="btn" href={`#/atom/${s.tryIt.element}${s.tryIt.isotope || s.tryIt.charge ? `?${[s.tryIt.isotope ? `iso=${s.tryIt.isotope}` : '', s.tryIt.charge ? `q=${s.tryIt.charge}` : ''].filter(Boolean).join('&')}` : ''}`}>{s.tryIt.label}</a>
+            <a className="btn" href={`#/atom/${section.tryIt.element}${section.tryIt.isotope || section.tryIt.charge ? `?${[section.tryIt.isotope ? `iso=${section.tryIt.isotope}` : '', section.tryIt.charge ? `q=${section.tryIt.charge}` : ''].filter(Boolean).join('&')}` : ''}`}>{section.tryIt.label}</a>
           </p>
         )}
       </article>
-      <KnowledgeCheck key={s.id} question={s.check} />
+      <KnowledgeCheck key={section.id} question={section.check} />
       <div className="row between">
         <button className="btn" onClick={() => setStep(step - 1)} disabled={step === 0}>Back</button>
         {last
