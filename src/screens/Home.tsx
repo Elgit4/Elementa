@@ -163,7 +163,7 @@ export function Home() {
             : `${lv.toNext} XP to reach level ${lv.level + 1}. Keep your momentum with one focused study session.`}</p>
         </div>
         <div className="home-hero-art" aria-hidden="true">
-          <ChemistryMascot mood={first ? 'curious' : 'cheer'} size={174} />
+          <ChemistryMascot mood="focus" size={174} />
           <span className="mascot-orbit orbit-one" />
           <span className="mascot-orbit orbit-two" />
         </div>
