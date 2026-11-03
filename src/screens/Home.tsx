@@ -258,7 +258,7 @@ export function Home() {
             </div>
           </div>
           {recent.length === 0 ? (
-            <p className="muted recent-empty">Elements you open will appear here. <a href="#/explore">Explore the periodic table</a>.</p>
+            <div className="mascot-empty-state"><ChemistryMascot mood="curious" size={88} /><p className="muted recent-empty"><strong>Your discoveries start here.</strong><br />Open an element and it will appear in this space. <a href="#/explore">Explore the periodic table</a>.</p></div>
           ) : (
             <div className="chips recent-chips">
               {recent.map((e) => <a key={e!.number} className="chip" href={`#/explore/${e!.number}`}><span className="sci">{e!.symbol}</span> {e!.name}</a>)}
