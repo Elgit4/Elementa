@@ -44,7 +44,7 @@ const advisories = Object.entries(fullReport.vulnerabilities ?? {}).map(([name, 
 
 console.log(JSON.stringify({ allDependencies: counts, productionDependencies: productionCounts, advisories }, null, 2));
 
-if ((productionCounts.critical ?? 0) > 0 || (productionCounts.high ?? 0) > 0) {
-  console.error('High or critical production dependency vulnerabilities must be resolved before release.');
+if ((counts.critical ?? 0) > 0 || (counts.high ?? 0) > 0) {
+  console.error('High or critical dependency vulnerabilities must be resolved before release.');
   process.exit(1);
 }
