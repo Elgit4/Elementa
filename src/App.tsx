@@ -1,7 +1,8 @@
 import { Suspense, lazy, useEffect, useRef } from 'react';
 import { BookOpen, BookOpenCheck, FlaskConical, Grid3x3, House, Moon, Sun } from 'lucide-react';
 import { useRoute } from './router';
-import { ProgressProvider, useProgress } from './state/ProgressContext';
+import { ProgressProvider } from './state/ProgressProvider';
+import { useProgress } from './state/useProgress';
 import { Home } from './screens/Home';
 const Explore = lazy(() => import('./screens/Explore').then((m) => ({ default: m.Explore })));
 const AtomExplorer = lazy(() => import('./screens/AtomExplorer').then((m) => ({ default: m.AtomExplorer })));
