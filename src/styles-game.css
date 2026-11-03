@@ -216,14 +216,13 @@
   grid-template-columns: minmax(0, 1.25fr) minmax(290px, 0.9fr);
   grid-template-areas:
     "practice quests"
-    "practice daily"
-    "achievements recent";
+    "practice recent"
+    "achievements achievements";
   align-items: start;
   gap: 18px;
 }
 .home-practice { grid-area: practice; min-width: 0; }
 .home-quests { grid-area: quests; min-width: 0; }
-.home-daily { grid-area: daily; min-width: 0; }
 .home-achievements { grid-area: achievements; min-width: 0; }
 .home-recent { grid-area: recent; min-width: 0; }
 .home-section-heading {
@@ -349,7 +348,6 @@
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "quests"
-      "daily"
       "practice"
       "recent"
       "achievements";
