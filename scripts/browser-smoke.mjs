@@ -305,10 +305,22 @@ try {
   // Dedicated Practice and Lab destinations should be reachable on mobile.
   await page.locator('.nav a[href="#/practice"]').click();
   await page.getByRole('heading', { name: 'Practice', exact: true }).waitFor();
-  assert.equal(await page.locator('.practice-hub-card').count(), 3, 'Practice should show the three published activities');
+  assert.equal(await page.locator('.practice-activity').count(), 3, 'Practice should show the three published activity paths');
+  assert.equal(await page.locator('.practice-activity-action').count(), 3, 'Every practice path should provide a clear action');
+  await page.locator('.practice-intro').waitFor();
+  const practiceWidth = await page.evaluate(() => ({ viewport: window.innerWidth, page: document.documentElement.scrollWidth }));
+  assert.ok(practiceWidth.page <= practiceWidth.viewport, 'Practice should not overflow horizontally on mobile');
 
   await page.locator('.nav a[href="#/lab"]').click();
   await page.getByRole('heading', { name: 'Virtual lab', exact: true }).waitFor();
+  await page.locator('.lab-intro').waitFor();
+  assert.equal(await page.locator('.lab-card').count(), 4, 'Virtual Lab should show all four published experiences');
+  const labWidth = await page.evaluate(() => ({ viewport: window.innerWidth, page: document.documentElement.scrollWidth }));
+  assert.ok(labWidth.page <= labWidth.viewport, 'Virtual Lab should not overflow horizontally on mobile');
+  await page.locator('.lab-card-ionic').click();
+  await page.locator('.lab-workspace-heading').waitFor();
+  await page.locator('.lab-experiment-kicker').waitFor();
+  await page.locator('.lab-stage-marker').waitFor();
 
   assert.deepEqual(failures, [], 'The browser must not raise uncaught page errors');
   console.log('Browser smoke tests passed: first-run mobile CLS, offline status, daily challenge modal/retry/completion, learning flow, saved progress, mobile layout, theme, Explore, Atomic Explorer, ionic/covalent activities, reaction balancing, both quiz routes, Practice and Lab hubs.');
